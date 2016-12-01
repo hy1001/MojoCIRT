@@ -1,0 +1,795 @@
+
+
+<title>Cirt Site : <%= stash('raName') %></title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+<script src="http://lannister.dpm.bwh.harvard.edu/bootstrap-table/dist/bootstrap-table.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="http://lannister.dpm.bwh.harvard.edu/bootstrap-table/dist/bootstrap-table.min.css">
+
+    <script src="http://lannister.dpm.bwh.harvard.edu/~hpaik/dev/eternicode-bootstrap-datepicker-b6844d9/js/bootstrap-datepicker.js"></script>
+    <link rel="stylesheet" href="http://lannister.dpm.bwh.harvard.edu/~hpaik/dev/eternicode-bootstrap-datepicker-b6844d9/dist/css/bootstrap-datepicker3.css">
+
+    <link rel="stylesheet" href="/show_site.css"> 
+
+
+
+<script>
+
+$(document).ready(function() {
+
+    var $username = '<%== getUserName %>' ;
+
+	$.ajax({
+		url: "http://tully.dpm.bwh.harvard.edu/api/getUpdatedTimeTAReport/"
+		    }).then(function(data) {
+			    $('#TA').append("<small> (as of " + data.time + ") </small>");
+			});
+
+	$.ajax({
+		url: "http://tully.dpm.bwh.harvard.edu/api/getUpdatedTimeLabIssues/"
+		    }).then(function(data) {
+			    $('#LabDataIssues').append("<small> (as of " + data.time + ") </small>");
+			    $('#MissingLabs').append("<small> (as of " + data.time + ") </small>");
+			    $('#EDCissues').append("<small> (as of " + data.time + ") </small>");
+			});
+
+	$.ajax({
+		url: "http://tully.dpm.bwh.harvard.edu/api/getUpdatedTimeTempStop/"
+		    }).then(function(data) {
+			    $('#TempStop').append("<small> (as of " + data.time + ") </small>");
+			});
+
+	$.ajax({
+		url: "http://tully.dpm.bwh.harvard.edu/api/getUpdatedTimeRecPermStop/"
+		    }).then(function(data) {
+			    $('#RecPermStop').append("<small> (as of " + data.time + ") </small>");
+			});
+
+	$.ajax({
+		url: "http://tully.dpm.bwh.harvard.edu/api/getUpdatedTimeMedRecs/<%= $id %>"
+		    }).then(function(data) {
+			    $('#MedRecs').append("<small> (as of " + data.time + ") </small>");
+			});
+
+	$.ajax({
+		url: "http://tully.dpm.bwh.harvard.edu/api/getUpdatedTimeSiteMetrics/"
+		    }).then(function(data) {
+			    $('#SiteMetrics').append("<small> (as of " + data.time + ") </small>");
+			});
+
+
+	$('.display').DataTable();
+	
+	$.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>", 
+		    type: "get", 
+		    dataType: "json", 
+		    success: function(result){
+		    drawTable( result );
+		}
+	    });
+
+//// search text box submit on enter key
+        $('#hptext').bind("enterKey", function(e) {
+
+		console.log( $("#hptext").val( ) );
+		$.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>&keyword=" + $("#hptext").val( ), 
+			    type: "get", 
+			    dataType: "json", 
+			    success: function(result){
+			    $("#updates").empty();
+			    drawTable( result );
+			}
+		    });
+
+          });
+
+        $('#hptext').keyup( function(e) {
+             if(e.keyCode == 13) {
+                  $(this).trigger("enterKey");
+             }
+         });
+
+
+/// key word search button
+	$('#hpbutton').click(function() {
+		console.log( $("#hptext").val( ) );
+		$.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>&keyword=" + $("#hptext").val( ), 
+			    type: "get", 
+			    dataType: "json", 
+			    success: function(result){
+			    $("#updates").empty();
+			    drawTable( result );
+			}
+		    });
+	    });
+
+//// search result clear button
+	$('#tweetClearButton').click(function() {
+		$( '#hptext' ).val( "" ) ;
+		console.log( $("#hptext").val( ) );
+		$.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>", 
+			    type: "get", 
+			    dataType: "json", 
+			    success: function(result){
+			    $("#updates").empty();
+			    drawTable( result );
+			}
+		    });
+	    });
+
+	$('#tweetModalbutton').click(function() {
+		//console.log( "I am here!" );
+		$( '#TweetModal' ).modal();
+	    });
+
+
+	$('#tweetSave').click(function() {
+	    //console.log( "I am here!" );
+		var mylog = $( '#log' ).val();
+		var patids = $( '#patid' ).val();
+             //console.log( patids.length );
+            if ( patids.length > 0 ) {
+		patsArray = patids.replace(/\s/g, '').split(',').map( function(obj) {return "#"+obj; } );		console.log( patids.replace(/\s/g, '').split(',').map( function(obj) {return "#"+obj; } ).join( " " ) );
+patsString = patsArray.join( " " );
+} else {
+    patsString = " ";
+}
+
+		var valuesString = $('input:checkbox:checked').map( function() {
+			return this.value;
+		    }).get().join(" ");
+
+             //console.log( valuesString );
+
+	    $.ajax({
+		type: "POST",
+		url: "http://tully.dpm.bwh.harvard.edu/api/createLog",
+//		data: "siteid=<%= $id %>&" + "message=" + mylog + " " + patsString + " " + valuesString  + "&hashtag=" + patsString + " " + valuesString,
+		data: "siteid=<%= $id %>&" + "message=" + $username + "::" + mylog + " " + patsString + " " + valuesString  + "&hashtag=" + patsString + " " + valuesString,
+		//data: "siteid=US-U100&" + "message=test123 #1123" + "&hashtag=#Temp #Stop",
+		success: function() { 
+		    console.log("success!!!"); 
+		    updateTwitterSource("");
+		},
+	    });
+
+	    }); <!-- tweetSave end -->
+
+
+} ); <!-- doc ready -->
+
+
+Array.prototype.diff = function(a) {
+    return this.filter(function(i) {return a.indexOf(i) < 0;});
+};
+
+Array.prototype.getUnique = function(){
+    var u = {}, a = [];
+    for(var i = 0, l = this.length; i < l; ++i){
+	if(u.hasOwnProperty(this[i])) {
+	    continue;
+	}
+	a.push(this[i]);
+	u[this[i]] = 1;
+    }
+    return a;
+};
+
+function updateTwitterSource( id ) {
+    console.log( id );
+    $( "#hptext" ).val( id );
+
+    $.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>&keyword=" + $("#hptext").val( ), 
+		type: "get", 
+		dataType: "json", 
+		success: function(result){
+		$("#updates").empty();
+		drawTable( result );
+	    }
+	});
+};
+
+function drawTable(data) {
+    for (var i = 0; i < data.length; i++) {
+	//console.log(data[i]);
+	$("#updates").append( '<div class="msg_body">' + '<div class="msg_text">' + data[i].message + '<div class="time">' + data[i].time + '</div></div>' );
+	//console.log( data[i].message );
+	//$('#updates').append( '<div class="msg_text">' + data[i].message + '<div class="time">' + data[i].time + '</div>' );
+	//$('#updates').append( '<div class="time">' + data[i].time + '</div>' );
+        $("#updates").append( '</div>' );
+        $("#updates").append( '</div>' );
+    }
+    
+};
+
+
+</script>
+
+</head>
+<body>
+
+<div id="middle">
+  <div class="container">
+
+<div class="row">
+
+  <div class="col-md-2">
+    %= form_for 'do_logout' => begin
+    %= submit_button 'Log me out', class => 'btn btn-success'
+% end
+  </div>
+  <div class="col-md-2"> <h4>Logged in as <%= getUserName %></h4> </div>
+
+</div>
+
+    <div class="jumbotron">
+<!--	<H1>CIRT Active Site : <%= $id %>, <%= getUserName %></H1> -->
+	<H1>CIRT Active Site : <%= $id %></H1>
+
+      <div id="menu" >
+	<input class="textbox" type="text" id="hptext" style="width:300px"> </input>
+	<button id="hpbutton" type="button" class="btn btn-info">Log Keyword Search</button>
+	<button id="tweetClearButton" type="button" class="btn btn-warning">Clear</button>
+	<button id="tweetModalbutton" type="button" class="btn btn-success">Compose</button>
+      </div>
+    </div>
+
+ </div>
+
+
+    <div id="middle-offset">
+
+    <div id="left" class="col-xs-4">
+
+<h2 id="PI">PI Coordinator Contact Info</h2>
+<table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/piCoordsEDC/<%= $id %>" data-cache="false">
+    <thead>
+        <tr>
+            <th data-field="Role">Role</th>
+            <th data-field="LastName">Last Name</th>
+	    <th data-field="FirstName">First Name</th>
+	    <th data-field="Phone">Phone</th>
+	    <th data-field="Email">Email</th>
+        </tr>
+    </thead>
+</table>
+<hr>
+
+
+<h2 id="SiteMetrics">Site Metrics </h2>
+
+<table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/siteMetrics/<%= $id %>" data-cache="false">
+    <thead>
+        <tr>
+            <th data-field="SiteID">SiteID</th>
+            <th data-field="Liaison">Liaison</th>
+	    <th data-field="SiteInitializationDate">Initialization Date</th>
+	    <th data-field="NInformedConsent">Informed Consent</th>
+	    <th data-field="NScreened">Screened</th>
+	    <th data-field="MostRecentScreeningDate">Most Recent Screening Date</th>
+	    <th data-field="NStartedRunin">Started Run-in</th>
+	    <th data-field="NRandomized">Randomized</th>
+        </tr>
+    </thead>
+</table>  
+
+<hr>
+<h2>Lab Data</h2>
+<h3 id="LabDataIssues">Lab Data Issues</h3>
+<p> 
+<div style="font-size:13.5px;">
+<table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/labIssues/<%= $id %>" data-cache="false" data-card-view="true">
+    <thead>
+        <tr>
+    <!-- <th data-field="LCASpecimen">LCA Specimen</th> -->
+            <th data-field="isNew">New</th>
+            <th data-field="Problem">Problem</th>
+            <th data-field="PatientID">Patient ID</th>
+            <th data-field="VisitDesignation">Visit Designation</th>
+            <th data-field="CollectionDate">Collection</th>
+            <th data-field="Gender">Gender</th>
+            <th data-field="BirthDate">Date of Birth</th>
+            <th data-field="Initials">Initials</th>
+            <th data-field="EDCGender">EDC Gender</th>
+            <th data-field="EDCBirthDate">EDC Date of Birth</th>
+            <th data-field="EDCInitials">EDC Initials</th>
+            <th data-field="MissingLabs">Missing labs</th>
+            <th data-field="BwhComments">BWH Comments</th>
+            <th data-field="LapCorpCommnets">LapCorp Comments</th>
+        </tr>
+    </thead>
+</table> 
+</div>
+</p>
+<hr>
+
+<h3 id="MissingLabs">Missing Lab</h3>
+<p>
+<table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/missingLab/<%= $id %>" data-cache="false">
+    <thead>
+        <tr>
+            <th data-field="PatientID">Patient ID</th>
+            <th data-field="VisitDesignation">Visit Designation</th>
+            <th data-field="VisitDate">Visit Date</th>
+            <th data-field="BloodCollectionDate">Blood Collection Date</th>
+            <th data-field="NextVisitDate">Next Visit Date</th>
+            <th data-field="BwhComments">BWH Comments</th>
+        </tr>
+    </thead>
+</table>
+</p>
+<hr>
+
+<h3 id="EDCissues">Lab - EDC issues</h3>
+<p><table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/edcIncomplete/<%= $id %>" data-cache="false">
+    <thead>
+        <tr>
+            <th data-field="PatientID">Patient ID</th>
+            <th data-field="VisitDesignation">Visit Designation</th>
+            <th data-field="VisitDate">Visit Date</th>
+            <th data-field="CentralLabCollectedDate">Central Lab Collected Date</th>
+            <th data-field="LabDate">Lab Date</th>
+            <th data-field="Problem">Problem</th>
+        </tr>
+    </thead>
+</table>
+</p>
+<hr>
+
+<h2 id="MedRecs">MedRecs</h2>
+<p>
+<table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/medRecs/<%= $id %>" data-cache="false">
+    <thead>
+        <tr>
+            <th data-field="PatientID">Patient ID</th>
+            <th data-field="CollectionDate">CollectionDate</th>
+	    <th data-field="DateReceivedMedRecs">Date Received Med Recs</th>
+	    <th data-field="MedRecReviewResult">Med Rec Review Result</th>
+        </tr>
+    </thead>
+</table>
+</p>
+<hr>
+
+
+
+<h2 id="BL2">BucketList2</h2>
+
+<h3 id="TA">TA Report </h3>
+<p>
+<table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/taReport/<%= $id %>" data-cache="false">
+    <thead>
+        <tr>
+            <th data-field="PatientID">Patient ID</th>
+            <th data-field="VisitOfLastTARun">Visit of last TA Run</th>
+            <th data-field="Problem">Problem</th>
+            <th data-field="DateMostRecentLab">Date of Most Recent Lab</th>
+            <th data-field="DateLastVisit">Date of Last Visit</th>
+            <th data-field="DateLastTARun">Date of Last TA Run</th>
+<!--            <th data-field="ActionRequired">Action Required</th> -->
+        </tr>
+    </thead>
+</table>
+</p>
+<hr>
+
+
+<h3 id="TempStop">Temp Stops</h3>
+<p>
+<table id="tempStopTable"  data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/tempStop/<%= $id %>" data-cache="false" data-card-view="false">
+    <thead>
+        <tr>
+            <th data-field="PatientID">Patient ID</th>
+            <th data-field="StopDate">Stop Date</th>
+            <th data-field="DaysOff">Days Off</th>
+            <th data-field="Reason">Reason</th>
+            <th data-field="Comments">Comments</th>
+            <th data-field="MostRecentVisitDate">Most Recent Visit Date</th>
+            <th data-field="FollowUpDate">FollowUp Date</th>
+            <th data-field="ReVisitDT">Revisit Date</th>
+        </tr>
+    </thead>
+</table>
+</p>
+
+<h3 id="RecPermStop">Recoverable Perm Stops</h3>
+<p>
+<table id="recvPermStopTable" data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/recvPermStop/<%= $id %>" data-cache="false">
+    <thead>
+        <tr>
+            <th data-field="PatientID">Patient ID</th>
+            <th data-field="StopDate">Stop Date</th>
+            <th data-field="DaysOff">Days Off</th>
+            <th data-field="Reason">Reason</th>
+            <th data-field="Comments">Comments</th>
+            <th data-field="MostRecentVisitDate">Most Recent Visit Date</th>
+            <th data-field="FollowUpDate">FollowUp Date</th>
+            <th data-field="ReVisitDT">Revisit Date</th>
+        </tr>
+    </thead>
+</table>
+</p>
+<hr>
+
+
+<h2 id="V2">Scheduled V2s</h2>
+<p>
+<table id="V2"  data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/getV2s/<%= $id %>" data-cache="false" data-card-view="false">
+    <thead>
+        <tr>
+            <th data-field="PatientID">Patient ID</th>
+            <th data-field="V1Date" data-sortable="true">V1 Date</th>
+            <th data-field="V2Date" data-sortable="true">V2 Date</th>
+        </tr>
+    </thead>
+</table>
+</p>
+<hr>
+
+<h2 id="V4">Scheduled V4s</h2>
+<p>
+<table id="V4"  data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/getV4s/<%= $id %>" data-cache="false" data-card-view="false">
+    <thead>
+        <tr>
+            <th data-field="PatientID">Patient ID</th>
+            <th data-field="V3Date" data-sortable="true">V3 Date</th>
+            <th data-field="CentralLabDate">Central Lab Date</th>
+            <th data-field="NextVisitDate" data-sortable="true">Next Visit Date</th>
+        </tr>
+    </thead>
+</table>
+</p>
+
+
+      <p class="endpadding"></p>
+
+
+<!-- Modal -->
+<div class="modal fade" id="recvPermStopModal" tabindex="-1" role="dialog" aria-labelledby="recvPermStopModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="recvPermStopModalLabel">Modal title</h3>
+      </div>
+      <div class="modal-body">
+
+        <div id="toShow">
+	</div>
+
+        <div id="toModify">
+	  <h4>Comments to add</h4>
+	  <textarea class="form-control" id="recvPermStopComments"></textarea>
+	  </br>
+	  <h4>FollowUp Date to set</h4>
+	  <input type="text" type="text" class="form-control hpdate" id="followupDate">
+	  <h4>Revisit Date to set</h4>
+	  <input type="text" type="text" class="form-control hpdate" id="recovPermStopRevisitDate">
+	</div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="recvPermStopSave">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="tempStopModal" tabindex="-1" role="dialog" aria-labelledby="tempStopModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="tempStopModalLabel">Modal title</h3>
+      </div>
+      <div class="modal-body">
+
+        <div id="toShow">
+	</div>
+
+        <div id="toModify">
+	  <h4>Comments to add</h4>
+	  <textarea class="form-control" id="tempStopComments"></textarea>
+	  <h4>FollowUp Date to set</h4>
+	  <input type="text" type="text" class="form-control hpdate" id="followupDate2">
+	  <h4>Revisit Date to set</h4>
+	  <input type="text" type="text" class="form-control hpdate" id="tempStopRevisitDate">
+	</div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="tempStopSave">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+
+<script>
+$(function () {
+
+    var $row;
+    var $username = '<%== getUserName %>' ;
+   var $hpid = '<%== $id %>';
+    var $id;
+
+    $('#recvPermStopTable').on('dbl-click-row.bs.table', function (e, row, $element) {
+
+     
+	console.log(row, $element);
+	console.log(row.PatientID+ " ");
+	console.log(row.Reason);
+	console.log($hpid);
+	console.log($username);
+
+	$row = row;
+	$id = row.id;
+	console.log($id);
+
+	$('#recvPermStopModalLabel').text(row.PatientID);
+	$('#followupDate').val(row.FollowUpDate);
+	$('#recovPermStopRevisitDate').val(row.ReVisitDT);
+	$('#recvPermStopModal').modal();
+
+    });
+
+
+    $( '#tempStopTable' ).on('dbl-click-row.bs.table', function (e, row, $element) {
+	$row = row;
+	$id = row.id;
+	$('#tempStopModalLabel').text(row.PatientID);
+	$('#followupDate2').val(row.FollowUpDate);
+	$('#tempStopRevisitDate').val(row.ReVisitDT);
+	$('#tempStopModal').modal();
+    });
+
+
+    $( "#recvPermStopSave" ).button().on( "click", function() {
+	console.log("button clicked");
+	console.log( $('#recvPermStopComments').val() );
+	console.log( $('#followupDate').val() );
+	console.log( $('#followupDate').val().length );
+	console.log( "** id :" + $id );
+
+	var $newComments = $('#recvPermStopComments').val(); 
+	var $followupDate = $('#followupDate').val();
+	var $revisitDate = $('#recovPermStopRevisitDate').val();
+
+	console.log( $row.Comments );
+	console.log( $newComments.length );
+console.log( $revisitDate );
+
+	if ( $row.Comments != null ) {
+	    if ( $row.Comments.length > 0 && $newComments.length > 0) {
+		$newComments = "; " + $newComments;
+		$newComments = $newComments.replace(/\r?\n/g, "<br />");    
+	    }
+	}
+
+	if ( $newComments.length > 0 || $followupDate.length > 0 || $revisitDate.length > 0 ) {
+
+	    $.ajax({
+		type: "POST",
+		url: "http://tully.dpm.bwh.harvard.edu/api/updateRecPermStopComments",
+		data: "id=" + $id + "&comments=" + $newComments + "&followupDate=" + $followupDate + "&revisitDate=" + $revisitDate,
+		success: function() { 
+		    console.log("success!!!"); 
+		    $('#recvPermStopTable').bootstrapTable('refresh', {url: 'http://tully.dpm.bwh.harvard.edu/api/recvPermStop/<%= $id %>'});
+		},
+	    });
+
+         //createLog from recoverable PermStop table
+	    $.ajax({
+		type: "POST",
+		url: "http://tully.dpm.bwh.harvard.edu/api/createLog",
+		data: "siteid=<%= $id %>&" + "message=" + $username + ":: #"+ $row.PatientID.substring(8, 12) + " #Perm #Stop : " + $('#recvPermStopComments').val() 
+    + " FollowUp Date: " + $followupDate + " Revisit Date: " + $revisitDate 
+    + "&hashtag=Perm Stop " + $row.PatientID.substring(8, 12),
+		//data: "siteid=US-U100&" + "message=test123 #1123" + "&hashtag=#Temp #Stop",
+		success: function() { 
+		    console.log("success!!!"); 
+		    updateTwitterSource("");
+		},
+	   });
+
+
+	} 
+	$('#recvPermStopModal').modal('hide');
+
+	$('#recvPermStopComments').val("") ;
+	$('#followupDate').val("");
+	$('#recovPermStopRevisitDate').val("");
+    });
+
+    $( "#tempStopSave" ).button().on( "click", function() {
+	console.log("button clicked");
+	console.log( $('#tempStopComments').val() );
+	console.log( "** id :" + $id );
+
+	var $newComments = $('#tempStopComments').val(); 
+	var $followupDate = $('#followupDate2').val();
+	var $revisitDate = $('#tempStopRevisitDate').val();
+
+	console.log( $row.Comments );
+	console.log( $newComments.length );
+        console.log( "******** " + $revisitDate );
+
+
+	if ( $row.Comments != null ) {
+	    if ( $row.Comments.length > 0 && $newComments.length > 0) {
+		$newComments = "; " + $newComments;
+		$newComments = $newComments.replace(/\r?\n/g, "<br />");    
+	    }
+	}
+
+	if ( $newComments.length > 0 || $followupDate.length > 0  || $revisitDate.length > 0 ) {
+
+	    $.ajax({
+		type: "POST",
+		url: "http://tully.dpm.bwh.harvard.edu/api/updateTempStopComments",
+		data: "id=" + $id + "&comments=" + $newComments + "&followupDate=" + $followupDate + "&revisitDate=" + $revisitDate,
+		success: function() { 
+		    console.log("success!!!"); 
+		    $('#tempStopTable').bootstrapTable('refresh', {url: 'http://tully.dpm.bwh.harvard.edu/api/tempStop/<%= $id %>'});
+		},
+	    });
+
+
+         //createLog from recoverable PermStop table
+	    $.ajax({
+		type: "POST",
+		url: "http://tully.dpm.bwh.harvard.edu/api/createLog",
+		data: "siteid=<%= $id %>&" + "message=" + $username + ":: #"+ $row.PatientID.substring(8, 12) + " #Temp #Stop : " + $('#tempStopComments').val() 
+    + " FollowUp Date: " + $followupDate + " Revisit Date: " + $revisitDate
+    + "&hashtag=Temp Stop " + $row.PatientID.substring(8, 12),
+		//data: "siteid=US-U100&" + "message=test123 #1123" + "&hashtag=#Temp #Stop",
+		success: function() { 
+		    console.log("success!!!"); 
+		    updateTwitterSource("");
+		},
+	   });
+
+	} // end if
+
+	$('#tempStopModal').modal('hide');
+    });
+
+
+    $('#recvPermStopModal').on('shown.bs.modal', function () {
+	$('#recvPermStopComments').focus();
+    });
+
+    $('#tempStopModal').on('shown.bs.modal', function () {
+	$('#tempStopComments').focus();
+    });
+
+    $('#TweetModal').on('shown.bs.modal', function () {
+	$('#log').focus();
+    });
+
+    <!-- clear modal page after closing or submitting -->
+    $('.modal').on('hidden.bs.modal', function() {
+       $(this)
+              .find('input[type="text"],textarea' ).val('').end()
+              .find('input[type="checkbox"]' ).prop("checked", "").end();
+    });
+
+});
+
+<!-- $('#followupDate, #followupDate2').datepicker({ -->
+$('.hpdate').datepicker({
+    format: "yyyy-mm-dd",
+    todayHighlight: true,
+    autoclose: true
+});
+
+
+
+
+
+</script>
+
+
+</div>
+
+<div id="right" class="col-xs-3">
+
+    <div class="row"> <div id="updates" > </div> </div>
+
+</div> <!-- end right -->
+
+
+<!-- Start TweetModal -->
+<div class="modal fade" id="TweetModal" tabindex="-1" role="dialog" aria-labelledby="TweetModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="TweetModalLabel">Create a log for <%= $id %></h3>
+      </div>
+
+      <div class="modal-body">
+        <div id="toModify">
+          <textarea class="form-control" rows="12" id="log"></textarea>
+	  <hr>
+	  <h4>Related Subject ID(s) (if many, delimited by comma. ex. 0012, 0024)</h4>
+	  <input type="text" id="patid" class="form-control">
+	  <hr>
+	  <h4>Related Keywords</h4>
+	  <div class="row">
+
+	    <div class="col-xs-4">
+	      <div class="checkbox">
+		<label><input id="PS" type="checkbox" value="#PERM #STOP">Perm Stop</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="TS" type="checkbox" value="#TEMP #STOP">Temp Stop</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="TA" type="checkbox" value="#TA">TA</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="Lab" type="checkbox" value="#LAB">Lab</label>
+	      </div>
+	    </div>
+	    
+	    <div class="col-xs-4">
+	      <div class="checkbox">
+		<label><input id="SAE" type="checkbox" value="#SAE">SAE</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="Withdraw" type="checkbox" value="#WITHDRAW">Withdraw</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="IRB" type="checkbox" value="#IRB">IRB</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="Drug" type="checkbox" value="#DRUG">Drug</label>
+	      </div>
+	    </div>
+
+	    <div class="col-xs-4">
+	      <div class="checkbox">
+		<label><input id="Contract" type="checkbox" value="#Contract">Contract</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="Payment" type="checkbox" value="#Payment">Payment</label>
+	      </div>
+	    </div>
+
+	  </div>
+	</div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="tweetSave" data-dismiss="modal" data-target="#TweetModal">Log</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- end tweekModal -->
+
+
+</div>
+</div>
+
+</body>

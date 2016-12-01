@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head><title>Waiting On ICF</title></head>
+  %= stylesheet '//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css'
+  %= stylesheet '//cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css'
+
+  %= javascript '//code.jquery.com/jquery-1.10.2.js'
+  %= javascript '//code.jquery.com/ui/1.11.4/jquery-ui.js'
+
+
+%= javascript begin
+
+  $(function() {
+    $( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd'});
+  });
+ % end
+
+
+<body>
+
+  <H1>Waiting On ICF</H1>
+
+  <!-- <form action="<%=url_for('waitingOnICFinsert')->to_abs%>" method="post"> -->
+  <form action="<%=url_for('waitingOnICFinsert')%>" method="post">
+    PatientID: <input type="text" name="patid">
+    Date Received:
+    %= input_tag 'dateReceived', id => 'datepicker', type => 'text'
+    <input type="submit" value="Add">
+  </form>
+
+
+    <br>
+    Waiting on ICF: <br>
+    <table id="example" class="display" cellspacing="0" border="1">
+      <tr>
+        <th>Patient ID</th>
+        <th>Date Received</th>
+      </tr>
+      % foreach my $row (@$rows) {
+      <tr>
+        % foreach my $text (@$row) {
+        <td><%= $text %></td>
+        % }
+      </tr>
+      % }
+    </table>
+  </body>
+</html>
+

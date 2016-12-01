@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" type="image/ico" href="http://www.datatables.net/favicon.ico">
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=2.0">
+
+	<title>DataTables example - Ajax data source (arrays)</title>
+	<link rel="stylesheet" type="text/css" href="../../media/css/jquery.dataTables.css">
+	<link rel="stylesheet" type="text/css" href="../resources/syntax/shCore.css">
+	<link rel="stylesheet" type="text/css" href="../resources/demo.css">
+	<style type="text/css" class="init">
+	</style>
+	<script type="text/javascript" language="javascript" src="../../media/js/jquery.js"></script>
+	<script type="text/javascript" language="javascript" src="../../media/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" language="javascript" src="../resources/syntax/shCore.js"></script>
+	<script type="text/javascript" language="javascript" src="../resources/demo.js"></script>
+<!--  -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../../media/css/jquery.dataTables.css">
+<!--  -->
+      <script type="text/javascript" src="./bootstrap.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="./bootstrap-editable.css">
+      <script type="text/javascript" src="./bootstrap-editable.js"></script>
+<!--  -->
+      <script type="text/javascript" src="./dataTables.bootstrap.js"></script>
+      <link rel="stylesheet" type="text/css" href="./dataTables.bootstrap.css">
+<!--  -->
+      <script type="text/javascript" src="./jquery.datatables.yadcf.js"></script>
+      <link rel="stylesheet" type="text/css" href="./jquery.datatables.yadcf.css">
+<!--  -->
+
+
+<!--  -->
+
+
+	<script type="text/javascript" language="javascript" class="init">
+$(function(){
+
+$(document).ready(function() {
+	$('#example').dataTable( {
+		"ajax": "../ajax/data/arrays_hp.txt"
+	} );
+} ); <!--  end doc-->
+
+$.fn.editable.defaults.mode = 'inline';
+
+$('#example .second_td a').editable({
+    type: 'select',
+    name: 'Office',
+    title: 'Office',
+    source: [
+      {value: 0, text: 'Edinburgh'},
+      {value: 1, text: 'Tokyo'},
+      {value: 2, text: 'San Francisco'},
+      {value: 3, text: 'New York'}
+    ]
+});
+
+
+} ); <!--  end function-->
+	</script>
+</head>
+
+<body class="dt-example">
+	<div class="container">
+		<section>
+			<h1>DataTables example <span>Ajax data source (arrays)</span></h1>
+
+
+
+			<table id="example" class="display" cellspacing="0" width="100%">
+				<thead>
+					<tr>
+						<th>SiteID</th>
+						<th>Position</th>
+						<th>Office</th>
+						<th>Extn.</th>
+						<th>Start date</th>
+						<th>Salary</th>
+					</tr>
+				</thead>
+
+				<tfoot>
+					<tr>
+						<th>Name</th>
+						<th>Position</th>
+						<th>Office</th>
+						<th>Extn.</th>
+						<th>Start date</th>
+						<th>Salary</th>
+					</tr>
+				</tfoot>
+			</table>
+
+		</section>
+	</div>
+
+
+</body>
+</html>

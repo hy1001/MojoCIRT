@@ -1,0 +1,10 @@
+<h2>Please provide your partners id and password.</h2>
+%= form_for 'do_login' => (method => 'POST') => begin
+    %= label_for username => 'User ID'
+    %= text_field 'username'
+
+    %= label_for password => 'Password'
+    %= password_field 'password'
+
+    %= submit_button 'Log me in', class => 'btn'
+% end

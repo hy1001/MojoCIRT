@@ -1,0 +1,162 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title> - jsFiddle demo</title>
+  
+  <script type="text/javascript" src="http://code.jquery.com/jquery-compat-git.js"></script>
+  
+      <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+    
+  
+    
+      <script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    
+  
+    
+      <link rel="stylesheet" type="text/css" href="http://vitalets.github.io/x-editable/assets/x-editable/bootstrap3-editable/css/bootstrap-editable.css">
+    
+  
+    
+      <script type="text/javascript" src="http://vitalets.github.com/x-editable/assets/x-editable/bootstrap3-editable/js/bootstrap-editable.js"></script>
+    
+  
+    
+      <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css">
+    
+  
+    
+      <script type="text/javascript" src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.min.js"></script>
+    
+  
+    
+      <script type="text/javascript" src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
+    
+  
+    
+      <script type="text/javascript" src="//cdn.datatables.net/plug-ins/28e7751dbec/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+    
+  
+    
+      <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/28e7751dbec/integration/bootstrap/3/dataTables.bootstrap.css">
+    
+  
+    
+      <script type="text/javascript" src="http://static.tumblr.com/1szuamz/ODin4qqkv/jquery.datatables.yadcf.js"></script>
+    
+  
+    
+      <link rel="stylesheet" type="text/css" href="http://static.tumblr.com/1szuamz/stUn4qqlr/jquery.datatables.yadcf.css">
+    
+  
+  <style type="text/css">
+    
+  </style>
+  
+
+
+<script type="text/javascript">//<![CDATA[ 
+$(function(){
+    $(document).ready(function() {
+      $('#example').dataTable({
+          "aaSorting": [[ 1, "desc" ]],
+          "lengthMenu": [[50, 250, 500, 1000], [50, 250, 500, 1000]],
+          "iDisplayLength": 250
+        });
+      });
+
+
+
+$.fn.editable.defaults.mode = 'inline';
+debugger;
+$('#example .second_td a').editable({
+    type: 'select',
+    name: 'Type',
+    title: 'Type',
+    source: [
+      {value: 0, text: 'Nothing'},
+      {value: 1, text: 'Everything'},
+      {value: 2, text: 'Something'},
+      {value: 3, text: 'That Thing'},
+      {value: 4, text: 'This Thing'},
+      {value: 5, text: 'Things'}
+    ]
+});
+});//]]>  
+
+</script>
+
+
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3 class="text-muted">Products in the System</h3>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-sm-12">
+
+	<div class="dataTables_wrapper form-inline no-footer" id="example_wrapper">
+	  <!-- <div class="row"> -->
+	  <!--   <\!-- <div class="col-xs-6"> -\-> -->
+	  <!--   <\!--   <div id="example_length" class="dataTables_length"> -\-> -->
+	  <!--   <\!-- 	<label> -\-> -->
+	  <!--   <\!-- 	  <select class="form-control input-sm" aria-controls="example" name="example_length"> -\-> -->
+	  <!--   <\!-- 	    <option value="50">50</option> -\-> -->
+	  <!--   <\!-- 	    <option value="250">250</option> -\-> -->
+	  <!--   <\!-- 	    <option value="500">500</option> -\-> -->
+	  <!--   <\!-- 	    <option value="1000">1000</option> -\-> -->
+	  <!--   <\!-- 	  </select>  -\-> -->
+	  <!--   <\!-- 	  records per page</label> -\-> -->
+	  <!--   <\!-- </div> -\-> -->
+	  <!--   <\!-- </div> -\-> -->
+	  <!-- <\!--   <div class="col-xs-6"> -\-> -->
+	  <!-- <\!--     <div class="dataTables_filter" id="example_filter"> -\-> -->
+	  <!-- <\!-- 	<label>Search: -\-> -->
+	  <!-- <\!-- 	  <input aria-controls="example" class="form-control input-sm" type="search"> -\-> -->
+	  <!-- <\!-- </label> -\-> -->
+	  <!-- <\!-- </div> -\-> -->
+	  <!-- <\!-- </div> -\-> -->
+	  <!-- </div> -->
+
+<table aria-describedby="example_info" role="grid" class="dataTable no-footer" id="example">
+  <thead>
+    <tr role="row">
+      <th aria-label="ID: activate to sort column ascending" style="width: 561px;" colspan="1" rowspan="1" aria-controls="example" tabindex="0" class="sorting">ID</th>
+      <th aria-label="Type: activate to sort column ascending" aria-sort="descending" style="width: 507px;" colspan="1" rowspan="1" aria-controls="example" tabindex="0" class="sorting_desc">Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+
+	      <tr class="odd" role="row">
+		<td><a href="http://example.com">ABC-123</a></td>
+		<td class="second_td sorting_1"><a class="editable editable-click" href="#" pk-data="ABC-123" data-type="select" data-value="5">Things</a></td>
+	      </tr><tr class="even" role="row">
+		<td><a href="http://example.com">XYZ-890</a></td>
+		<td class="second_td sorting_1"><a class="editable editable-click" href="#" pk-data="XYZ-890" data-type="select" data-value="5">Things</a></td>
+	    </tr></tbody>
+	  </table>
+
+
+<!-- <div class="row"> -->
+<!--   <\!-- <div class="col-xs-6"> -\-> -->
+<!--   <\!--   <div aria-live="polite" role="status" id="example_info" class="dataTables_info">Showing 1 to 2 of 2 entries -\-> -->
+<!--   <\!-- </div> -\-> -->
+<!--   <\!-- </div> -\-> -->
+<!--   <\!-- <div class="col-xs-6"> -\-> -->
+<!--   <\!--   <\\!-- <div id="example_paginate" class="dataTables_paginate paging_simple_numbers"> -\\-> -\-> -->
+<!--   <\!--   <\\!--   <ul class="pagination"> -\\-> -\-> -->
+<!--   <\!--   <\\!-- 	<li id="example_previous" tabindex="0" aria-controls="example" class="paginate_button previous disabled"><a href="#">Previous</a></li> -\\-> -\-> -->
+<!--   <\!--   <\\!-- 	<li tabindex="0" aria-controls="example" class="paginate_button active"><a href="#">1</a></li> -\\-> -\-> -->
+<!--   <\!--   <\\!-- 	<li id="example_next" tabindex="0" aria-controls="example" class="paginate_button next disabled"><a href="#">Next</a></li> -\\-> -\-> -->
+<!--   <\!--   <\\!-- 	</ul> -\\-> -\-> -->
+<!--   <\!--   <\\!-- 	</div> -\\-> -\-> -->
+<!--   <\!-- 	</div> -\-> -->
+<!-- 	</div> -->
+	</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

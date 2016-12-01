@@ -1,0 +1,497 @@
+
+
+<title>Cirt Site : <%= stash('id') %></title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+<script src="http://lannister.dpm.bwh.harvard.edu/bootstrap-table/dist/bootstrap-table.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" href="http://lannister.dpm.bwh.harvard.edu/bootstrap-table/dist/bootstrap-table.min.css">
+
+<script src="http://lannister.dpm.bwh.harvard.edu/~hpaik/dev/eternicode-bootstrap-datepicker-b6844d9/js/bootstrap-datepicker.js"></script>
+<link rel="stylesheet" href="http://lannister.dpm.bwh.harvard.edu/~hpaik/dev/eternicode-bootstrap-datepicker-b6844d9/dist/css/bootstrap-datepicker3.css">
+
+
+
+
+
+
+<script>
+
+$(document).ready(function() {
+
+<!-- modify api cirtSiteMetics.pl
+    # return $self->render(json =>  $data );
+    return $self->render(json =>  { "data" => $data } ); -->
+
+
+$('#table1').dataTable( {
+<!--  "scrollY": 200, -->
+  "scrollX": 200,
+  "bFilter": false,
+  "bPaginate": false,
+  "ajax": "http://tully.dpm.bwh.harvard.edu/api/piCoordsEDC/<%= $id %>",
+  "columns": [
+                        { "data": "Role" },
+                        { "data": "LastName" },
+                        { "data": "FirstName" },
+                        { "data": "Phone" },
+                        { "data": "Email" }
+      ]
+});
+
+
+	$.ajax({
+		url: "http://tully.dpm.bwh.harvard.edu/api/getUpdatedTimeTAReport/"
+		    }).then(function(data) {
+			    $('#TA').append("<small> (as of " + data.time + ") </small>");
+			});
+
+	$.ajax({
+		url: "http://tully.dpm.bwh.harvard.edu/api/getUpdatedTimeLabIssues/"
+		    }).then(function(data) {
+			    $('#LabDataIssues').append("<small> (as of " + data.time + ") </small>");
+			    $('#MissingLabs').append("<small> (as of " + data.time + ") </small>");
+			    $('#EDCissues').append("<small> (as of " + data.time + ") </small>");
+			});
+
+	$.ajax({
+		url: "http://tully.dpm.bwh.harvard.edu/api/getUpdatedTimeTempStop/"
+		    }).then(function(data) {
+			    $('#TempStop').append("<small> (as of " + data.time + ") </small>");
+			});
+
+	$.ajax({
+		url: "http://tully.dpm.bwh.harvard.edu/api/getUpdatedTimeRecPermStop/"
+		    }).then(function(data) {
+			    $('#RecPermStop').append("<small> (as of " + data.time + ") </small>");
+			});
+
+	$.ajax({
+		url: "http://tully.dpm.bwh.harvard.edu/api/getUpdatedTimeMedRecs/<%= $id %>"
+		    }).then(function(data) {
+			    $('#MedRecs').append("<small> (as of " + data.time + ") </small>");
+			});
+
+	$.ajax({
+		url: "http://tully.dpm.bwh.harvard.edu/api/getUpdatedTimeSiteMetrics/"
+		    }).then(function(data) {
+			    $('#SiteMetrics').append("<small> (as of " + data.time + ") </small>");
+			});
+
+	///////
+	$('.display').DataTable();
+	
+	$.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>", 
+		    type: "get", 
+		    dataType: "json", 
+		    success: function(result){
+		    drawTable( result );
+		}
+	    });
+
+	$('#hpbutton').click(function() {
+		console.log( $("#hptext").val( ) );
+		$.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>&keyword=" + $("#hptext").val( ), 
+			    type: "get", 
+			    dataType: "json", 
+			    success: function(result){
+			    $("#updates").empty();
+			    drawTable( result );
+			}
+		    });
+	    });
+
+	$('#tweetClearButton').click(function() {
+		$( '#hptext' ).val( "" ) ;
+		console.log( $("#hptext").val( ) );
+		$.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>", 
+			    type: "get", 
+			    dataType: "json", 
+			    success: function(result){
+			    $("#updates").empty();
+			    drawTable( result );
+			}
+		    });
+	    });
+
+	$('#tweetModalbutton').click(function() {
+		//console.log( "I am here!" );
+		$( '#TweetModal' ).modal();
+	    });
+
+
+	$('#tweetSave').click(function() {
+
+	    console.log( "I am here!" );
+	    
+		var mylog = $( '#log' ).val();
+		var patids = $( '#patid' ).val();
+console.log( patids.length );
+if ( patids.length > 0 ) {
+		patsArray = patids.replace(/\s/g, '').split(',').map( function(obj) {return "#"+obj; } );		console.log( patids.replace(/\s/g, '').split(',').map( function(obj) {return "#"+obj; } ).join( " " ) );
+patsString = patsArray.join( " " );
+} else {
+    patsString = " ";
+}
+
+		var valuesString = $('input:checkbox:checked').map( function() {
+			return this.value;
+		    }).get().join(" ");
+
+console.log( valuesString );
+
+
+	    $.ajax({
+		type: "POST",
+		url: "http://tully.dpm.bwh.harvard.edu/api/createLog",
+		data: "siteid=<%= $id %>&" + "message=" + mylog + " " + patsString + " " + valuesString  + "&hashtag=" + patsString + " " + valuesString,
+		//data: "siteid=US-U100&" + "message=test123 #1123" + "&hashtag=#Temp #Stop",
+		success: function() { 
+		    console.log("success!!!"); 
+		    updateTwitterSource("");
+		},
+	    });
+
+	    }); <!-- tweetSave end -->
+
+
+		     } );
+
+
+Array.prototype.diff = function(a) {
+    return this.filter(function(i) {return a.indexOf(i) < 0;});
+};
+
+Array.prototype.getUnique = function(){
+    var u = {}, a = [];
+    for(var i = 0, l = this.length; i < l; ++i){
+	if(u.hasOwnProperty(this[i])) {
+	    continue;
+	}
+	a.push(this[i]);
+	u[this[i]] = 1;
+    }
+    return a;
+};
+
+function updateTwitterSource( id ) {
+    console.log( id );
+    $( "#hptext" ).val( id );
+
+    $.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>&keyword=" + $("#hptext").val( ), 
+		type: "get", 
+		dataType: "json", 
+		success: function(result){
+		$("#updates").empty();
+		drawTable( result );
+	    }
+	});
+};
+
+function drawTable(data) {
+    for (var i = 0; i < data.length; i++) {
+	//console.log(data[i]);
+	$("#updates").append( '<div class="msg_body">' + '<div class="msg_text">' + data[i].message + '<div class="time">' + data[i].time + '</div></div>' );
+	//console.log( data[i].message );
+	//$('#updates').append( '<div class="msg_text">' + data[i].message + '<div class="time">' + data[i].time + '</div>' );
+	//$('#updates').append( '<div class="time">' + data[i].time + '</div>' );
+        $("#updates").append( '</div>' );
+        $("#updates").append( '</div>' );
+    }
+    
+};
+
+
+</script>
+
+
+<style>
+
+#middle {
+  top: 0;
+
+ bottom: 0px;
+ margin: 0 auto;
+ position: absolute;
+ width: 100%
+}
+
+#middle-offset {
+ position: relative;
+ height: 100%;
+}
+
+#left, #right {
+overflow-y: scroll;
+}
+
+#left {
+ width: 61%;
+ height: 100%
+}
+
+#right {
+ background: #eed5c3;
+ position: absolute;
+ right: 0;
+ top: 0;
+ width: 38%;
+ bottom: 0;
+}
+
+.msg_text
+{
+    margin-left:70px;
+    word-wrap:break-word; 
+  overflow:hidden;
+  padding:5px;
+  display:block;
+  font-size:14px;
+  font-family:Verdana, Geneva, sans-serif;
+}
+
+.time { font-size:12px; font-style:italic; color:#eed5c3; }
+
+#menu{
+      float: right;
+}
+
+
+
+
+.msg_body
+{
+    /* min-height:70px; */
+	margin-bottom:10px;
+border-bottom:solid 1px #fafafa;
+}
+.msg_img img
+{
+float:left;
+height:50px;
+width:50px;
+border:solid 1px #dedede;
+padding:5px;
+cursor:pointer;
+}
+.msg_text
+{
+    margin-left:70px;
+    /* min-height:50px;*/
+	word-wrap:break-word; 
+overflow:hidden;
+padding:5px;
+display:block;
+    font-size:14px;
+    font-family:Verdana, Geneva, sans-serif;
+}
+.time { font-size:12px; font-style:italic; color:#999; }
+    .delete { color:#F00; font-weight:bold; float:right; }
+	.loader { background: url('loading.gif'); }
+
+.msg-form-content {
+box-shadow: 0px 1px 1px #CCC;
+border: 1px solid #BFBFBF;
+background: #fff;
+color: #6B6B6B;
+border-radius: 3px;
+width:600px;
+}
+.msg-form-header {
+background: #e8ebed;
+padding: 6px;
+  font-family: Tahoma, Arial, Verdana, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+color: #333;
+border-bottom: 1px solid #fafafa;
+}
+
+
+.msg-loader {
+float: right;
+}
+
+.msg-form-inner {
+padding: 10px;
+border-bottom: 1px solid #EEE;
+}
+.msg-form-inner textarea {
+border: 0;
+outline: 0;
+  font-family: Tahoma, Arial, Verdana, sans-serif;
+width: 500px;
+resize: none;
+height: 38px;
+  /*min-height: 38px;*/
+      max-width: 600px;
+overflow: hidden;
+}
+.msg-btn {
+    text-align:right;
+padding: 6px 10px 7px 0;
+height:25px;
+}
+
+.msg-btn a {
+float: right;
+  border-radius: 3px;
+padding: 4px 5px;
+color: #fff;
+cursor: pointer;
+  text-decoration: none;
+border: 1px solid;
+border-color: #475d91 #3c5389 #3a5186;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, .2);
+}
+
+a {
+  color: #380;
+    text-decoration: none;
+    border-bottom: 1px dashed #380;
+}
+
+      p.endpadding {
+	  padding-bottom: 8cm;
+      }
+
+</style>
+
+</head>
+<body>
+
+<div id="middle">
+
+  <div class="container">
+    <div class="jumbotron">
+      <div class="row">
+	<H1>CIRT Active Site : <%= $id %>, <%= getUserName %></H1>
+      </div>
+
+      <div id="menu" >
+	<input class="textbox" type="text" id="hptext" style="width:300px"> </input>
+	<button id="hpbutton" type="button" class="btn btn-info">Log Keyword Search</button>
+	<button id="tweetClearButton" type="button" class="btn btn-warning">Clear</button>
+	<button id="tweetModalbutton" type="button" class="btn btn-success">Compose</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="middle-offset">
+    
+    <div id="left" class="col-xs-4">
+
+	<h2 id="PI">PI Coordinator Contact Info</h2>
+	<!-- <table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/piCoordsEDC/<%= $id %>" data-cache="false"> -->
+	<table id="table1" class="display" cellspacing="0" width="100%">
+	  <thead>
+            <tr>
+              <th>Role</th>
+              <th>Last Name</th>
+	      <th>First Name</th>
+	      <th>Phone</th>
+	      <th>Email</th>
+            </tr>
+	  </thead>
+	</table>
+
+    </div> <!-- end left -->
+    
+    <div id="right" class="col-xs-3">
+      
+      <div class="row"> <div id="updates" > </div> </div>
+
+    </div> <!-- end right -->
+
+
+<!-- Start TweetModal -->
+<div class="modal fade" id="TweetModal" tabindex="-1" role="dialog" aria-labelledby="TweetModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="TweetModalLabel">Create a log for <%= $id %></h3>
+      </div>
+
+      <div class="modal-body">
+        <div id="toModify">
+          <textarea class="form-control" rows="12" id="log"></textarea>
+	  <hr>
+	  <h4>Related Subject ID(s) (if many, delimited by comma. ex. 0012, 0024)</h4>
+	  <input type="text" id="patid" class="form-control">
+	  <hr>
+	  <h4>Related Keywords</h4>
+	  <div class="row">
+
+	    <div class="col-xs-4">
+	      <div class="checkbox">
+		<label><input id="PS" type="checkbox" value="#PERM #STOP">Perm Stop</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="TS" type="checkbox" value="#TEMP #STOP">Temp Stop</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="TA" type="checkbox" value="#TA">TA</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="Lab" type="checkbox" value="#LAB">Lab</label>
+	      </div>
+	    </div>
+	    
+	    <div class="col-xs-4">
+	      <div class="checkbox">
+		<label><input id="SAE" type="checkbox" value="#SAE">SAE</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="Withdraw" type="checkbox" value="#WITHDRAW">Withdraw</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="IRB" type="checkbox" value="#IRB">IRB</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="Drug" type="checkbox" value="#DRUG">Drug</label>
+	      </div>
+	    </div>
+
+	    <div class="col-xs-4">
+	      <div class="checkbox">
+		<label><input id="Contract" type="checkbox" value="#Contract">Contract</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="Payment" type="checkbox" value="#Payment">Payment</label>
+	      </div>
+	    </div>
+
+	  </div>
+	</div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="tweetSave" data-dismiss="modal" data-target="#TweetModal">Log</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- end tweekModal -->
+
+
+</div>
+</div>
+
+</body>

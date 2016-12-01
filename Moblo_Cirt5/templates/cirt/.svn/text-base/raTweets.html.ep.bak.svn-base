@@ -1,0 +1,312 @@
+
+<title>Cirt Site : <%= stash('id') %></title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="/show_site.css"> 
+
+
+
+<script>
+
+$(document).ready(function() {
+
+    var $username = '<%== getUserName %>' ;
+
+	$.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>", 
+		    type: "get", 
+		    dataType: "json", 
+		    success: function(result){
+		    drawTable( result );
+		}
+	    });
+
+//// search text box submit on enter key
+        $('#hptext').bind("enterKey", function(e) {
+
+		console.log( $("#hptext").val( ) );
+		$.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>&keyword=" + $("#hptext").val( ), 
+			    type: "get", 
+			    dataType: "json", 
+			    success: function(result){
+			    $("#updates").empty();
+			    drawTable( result );
+			}
+		    });
+
+          });
+
+        $('#hptext').keyup( function(e) {
+             if(e.keyCode == 13) {
+                  $(this).trigger("enterKey");
+             }
+         });
+
+
+/// key word search button
+	$('#hpbutton').click(function() {
+		console.log( $("#hptext").val( ) );
+		$.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>&keyword=" + $("#hptext").val( ), 
+			    type: "get", 
+			    dataType: "json", 
+			    success: function(result){
+			    $("#updates").empty();
+			    drawTable( result );
+			}
+		    });
+	    });
+
+//// search result clear button
+	$('#tweetClearButton').click(function() {
+		$( '#hptext' ).val( "" ) ;
+		console.log( $("#hptext").val( ) );
+		$.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets?siteid=<%= $id %>", 
+			    type: "get", 
+			    dataType: "json", 
+			    success: function(result){
+			    $("#updates").empty();
+			    drawTable( result );
+			}
+		    });
+	    });
+
+	$('#tweetModalbutton').click(function() {
+		//console.log( "I am here!" );
+		$( '#TweetModal' ).modal();
+	    });
+
+
+	$('#tweetSave').click(function() {
+	    //console.log( "I am here!" );
+		var mylog = $( '#log' ).val();
+		var patids = $( '#patid' ).val();
+             //console.log( patids.length );
+            if ( patids.length > 0 ) {
+		patsArray = patids.replace(/\s/g, '').split(',').map( function(obj) {return "#"+obj; } );		console.log( patids.replace(/\s/g, '').split(',').map( function(obj) {return "#"+obj; } ).join( " " ) );
+patsString = patsArray.join( " " );
+} else {
+    patsString = " ";
+}
+
+		var valuesString = $('input:checkbox:checked').map( function() {
+			return this.value;
+		    }).get().join(" ");
+
+             //console.log( valuesString );
+
+	    $.ajax({
+		type: "POST",
+		url: "http://tully.dpm.bwh.harvard.edu/api/createLog",
+//		data: "siteid=<%= $id %>&" + "message=" + mylog + " " + patsString + " " + valuesString  + "&hashtag=" + patsString + " " + valuesString,
+		data: "siteid=<%= $id %>&" + "bwhStaff=" + $username + "&message=" + mylog + " " + patsString + " " + valuesString  + "&hashtag=" + patsString + " " + valuesString,
+		//data: "siteid=US-U100&" + "message=test123 #1123" + "&hashtag=#Temp #Stop",
+		success: function() { 
+		    console.log("success!!!"); 
+		    updateTwitterSource("");
+		},
+	    });
+
+	    }); <!-- tweetSave end -->
+
+
+} ); <!-- doc ready -->
+
+
+Array.prototype.diff = function(a) {
+    return this.filter(function(i) {return a.indexOf(i) < 0;});
+};
+
+Array.prototype.getUnique = function(){
+    var u = {}, a = [];
+    for(var i = 0, l = this.length; i < l; ++i){
+	if(u.hasOwnProperty(this[i])) {
+	    continue;
+	}
+	a.push(this[i]);
+	u[this[i]] = 1;
+    }
+    return a;
+};
+
+function updateTwitterSource( id ) {
+    console.log( id );
+    $( "#hptext" ).val( id );
+
+    $.ajax({url: "http://tully.dpm.bwh.harvard.edu/api/tweets", 
+		type: "get", 
+		dataType: "json", 
+		success: function(result){
+		$("#updates").empty();
+		drawTable( result );
+	    }
+	});
+};
+
+function drawTable(data) {
+    for (var i = 0; i < data.length; i++) {
+	//console.log(data[i]);
+	$("#updates").append( '<div class="msg_body">' + '<div class="msg_text">' + data[i].message + '<div class="time">' + data[i].time + ' By ' + data[i].bwhStaff + '</div></div>' );
+	//console.log( data[i].message );
+	//$('#updates').append( '<div class="msg_text">' + data[i].message + '<div class="time">' + data[i].time + '</div>' );
+	//$('#updates').append( '<div class="time">' + data[i].time + '</div>' );
+        $("#updates").append( '</div>' );
+        $("#updates").append( '</div>' );
+    }
+    
+};
+
+
+</script>
+
+</head>
+<body>
+
+<div id="middle">
+  <div class="container">
+
+<div class="row">
+
+  <div class="col-md-2">
+    %= form_for 'do_logout' => begin
+    %= submit_button 'Log me out', class => 'btn btn-success'
+% end
+  </div>
+  <div class="col-md-2"> <h4>Logged in as <%= getUserName %></h4> </div>
+
+</div>
+
+    <div class="jumbotron">
+<!--	<H1>CIRT Active Site : <%= $id %>, <%= getUserName %></H1> -->
+	<H1>CIRT Active Site : <%= $id %></H1>
+
+      <div id="menu" >
+	<input class="textbox" type="text" id="hptext" style="width:300px"> </input>
+	<button id="hpbutton" type="button" class="btn btn-info">Log Keyword Search</button>
+	<button id="tweetClearButton" type="button" class="btn btn-warning">Clear</button>
+	<button id="tweetModalbutton" type="button" class="btn btn-success">Compose</button>
+      </div>
+    </div>
+
+ </div>
+
+
+<script>
+$(function () {
+
+    var $row;
+    var $username = '<%== getUserName %>' ;
+    var $hpid = '<%== $id %>';
+
+    $('#TweetModal').on('shown.bs.modal', function () {
+	$('#log').focus();
+    });
+
+    <!-- clear modal page after closing or submitting -->
+    $('.modal').on('hidden.bs.modal', function() {
+       $(this)
+              .find('input[type="text"],textarea' ).val('').end()
+              .find('input[type="checkbox"]' ).prop("checked", "").end();
+    });
+
+});
+
+</script>
+
+
+
+
+
+    <div class="row"> <div id="updates" > </div> </div>
+
+
+
+<!-- Start TweetModal -->
+<div class="modal fade" id="TweetModal" tabindex="-1" role="dialog" aria-labelledby="TweetModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="TweetModalLabel">Create a log for <%= $id %></h3>
+      </div>
+
+      <div class="modal-body">
+        <div id="toModify">
+          <textarea class="form-control" rows="12" id="log"></textarea>
+	  <hr>
+	  <h4>Related Subject ID(s) (if many, delimited by comma. ex. 0012, 0024)</h4>
+	  <input type="text" id="patid" class="form-control">
+	  <hr>
+	  <h4>Related Keywords</h4>
+	  <div class="row">
+
+	    <div class="col-xs-4">
+	      <div class="checkbox">
+		<label><input id="PS" type="checkbox" value="#PERM #STOP">Perm Stop</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="TS" type="checkbox" value="#TEMP #STOP">Temp Stop</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="TA" type="checkbox" value="#TA">TA</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="Lab" type="checkbox" value="#LAB">Lab</label>
+	      </div>
+	    </div>
+	    
+	    <div class="col-xs-4">
+	      <div class="checkbox">
+		<label><input id="SAE" type="checkbox" value="#SAE">SAE</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="Withdraw" type="checkbox" value="#WITHDRAW">Withdraw</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="IRB" type="checkbox" value="#IRB">IRB</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="Drug" type="checkbox" value="#DRUG">Drug</label>
+	      </div>
+	    </div>
+
+	    <div class="col-xs-4">
+	      <div class="checkbox">
+		<label><input id="Contract" type="checkbox" value="#Contract">Contract</label>
+	      </div>
+	      <div class="checkbox">
+		<label><input id="Payment" type="checkbox" value="#Payment">Payment</label>
+	      </div>
+	    </div>
+
+	  </div>
+	</div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="tweetSave" data-dismiss="modal" data-target="#TweetModal">Log</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- end tweekModal -->
+
+
+
+</div>
+
+</body>

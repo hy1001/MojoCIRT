@@ -1,0 +1,111 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title> - jsFiddle demo</title>
+  
+  <script type="text/javascript" src="https://code.jquery.com/jquery-compat-git.js"></script>
+  
+      <!-- <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"> -->
+      <!-- <script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script> -->
+      <link rel="stylesheet" type="text/css" href="./bootstrap.min.css">
+      <script type="text/javascript" src="./bootstrap.min.js"></script>
+
+      <!-- <link rel="stylesheet" type="text/css" href="http://vitalets.github.io/x-editable/assets/x-editable/bootstrap3-editable/css/bootstrap-editable.css"> -->
+      <!-- <script type="text/javascript" src="http://vitalets.github.com/x-editable/assets/x-editable/bootstrap3-editable/js/bootstrap-editable.js"></script> -->
+      <link rel="stylesheet" type="text/css" href="./bootstrap-editable.css">
+      <script type="text/javascript" src="./bootstrap-editable.js"></script>
+
+      <!-- <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css"> -->
+      <!-- <script type="text/javascript" src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.min.js"></script> -->
+      <link rel="stylesheet" type="text/css" href="./jquery.dataTables.css">
+      <script type="text/javascript" src="./jquery.dataTables.min.js"></script>
+      <!-- <script type="text/javascript" src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script> -->
+
+      <!-- <script type="text/javascript" src="//cdn.datatables.net/plug-ins/28e7751dbec/integration/bootstrap/3/dataTables.bootstrap.js"></script> -->
+      <!-- <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/28e7751dbec/integration/bootstrap/3/dataTables.bootstrap.css"> -->
+      <script type="text/javascript" src="./dataTables.bootstrap.js"></script>
+      <link rel="stylesheet" type="text/css" href="./dataTables.bootstrap.css">
+
+      <script type="text/javascript" src="./jquery.datatables.yadcf.js"></script>
+      <link rel="stylesheet" type="text/css" href="./jquery.datatables.yadcf.css">
+  <style type="text/css">
+    
+  </style>
+  
+
+
+<script type="text/javascript">//<![CDATA[ 
+$(function(){
+    $(document).ready(function() {
+      $('#example').dataTable({
+		"ajax": "../ajax/data/arrays_hp.txt",
+          "iDisplayLength": 25
+        });
+
+$('#example .second_td a').editable({
+    type: 'select',
+    name: 'Office',
+    title: 'Office',
+    source: [
+      {value: 0, text: 'Edinburgh'},
+      {value: 1, text: 'Tokyo'},
+      {value: 2, text: 'San Francisco'},
+      {value: 3, text: 'New York'}
+    ]
+});
+
+      });
+
+$.fn.editable.defaults.mode = 'inline';
+
+debugger;
+
+$('#example .second_td a').editable({
+    type: 'select',
+    name: 'Office',
+    title: 'Office',
+    source: [
+      {value: 0, text: 'Edinburgh'},
+      {value: 1, text: 'Tokyo'},
+      {value: 2, text: 'San Francisco'},
+      {value: 3, text: 'New York'}
+    ]
+});
+});//]]>  
+
+</script>
+
+
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3 class="text-muted">Products in the System</h3>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-sm-12">
+
+	<div class="dataTables_wrapper form-inline no-footer" id="example_wrapper">
+
+	  <table aria-describedby="example_info" role="grid" class="dataTable no-footer" id="example">
+	    <thead>
+	      <tr role="row">
+		<th aria-controls="example">SiteID</th>
+		<th aria-controls="example">Position</th>
+		<th aria-controls="example">Office</th>
+		<th aria-controls="example">Extn.</th>
+		<th aria-controls="example">Start date</th>
+		<th aria-controls="example">Salary</th>
+	      </tr>
+	    </thead>
+
+
+	  </table>
+
+	</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

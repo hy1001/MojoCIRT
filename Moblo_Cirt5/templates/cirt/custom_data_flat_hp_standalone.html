@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<!--<link rel="shortcut icon" type="image/ico" href="http://www.datatables.net/favicon.ico">-->
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=2.0">
+
+	<title>Hello, CIRT!</title>
+	<link rel="stylesheet" type="text/css" href="/DataTables-1.10.5/media/css/jquery.dataTables.css">
+	<link rel="stylesheet" type="text/css" href="/DataTables-1.10.5/examples/resources/syntax/shCore.css">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<style type="text/css" class="init">
+
+	</style>
+	<link rel="shortcut icon" href="/images/fav_baratheon.ico">
+	<script type="text/javascript" language="javascript" src="/DataTables-1.10.5/media/js/jquery.js"></script>
+	<script type="text/javascript" language="javascript" src="/DataTables-1.10.5/media/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" language="javascript" src="/DataTables-1.10.5/examples/resources/syntax/shCore.js"></script>
+	<script type="text/javascript" language="javascript" src="/DataTables-1.10.5/examples/resources/demo.js"></script>
+	<script type="text/javascript" language="javascript" class="init">
+
+$(document).ready(function() {
+	$('#example').dataTable( {
+                "iDisplayLength": 25,
+		"ajax": {
+			"url": "http://baratheon.dipr.partners.org/api/siteFirstPage/",
+			"dataSrc": ""
+		},
+		"columns": [
+			{ "data": "SiteID" },
+			{ "data": "PI" },
+			{ "data": "Clinic" },
+			{ "data": "CoI" },
+			{ "data": "SC" },
+			{ "data": "City" },
+			{ "data": "State" },
+			{ "data": "Liaison" },
+			<!-- { "data": "BucketProgrammed" }, -->
+			<!-- { "data": "BucketByRA" } -->
+		]
+	} );
+} );
+
+	</script>
+
+
+</head>
+
+<body class="dt-example">
+
+<!-- <a href="admin/delete/US-U122"> goto </a> -->
+
+	<div class="container">
+
+<div class="row">
+  <div class="col-md-2">
+    %= form_for 'do_logout' => begin
+    %= submit_button 'Log me out', class => 'btn btn-success'
+% end
+  </div>
+  <div class="col-md-2"> <h4>Logged in as <%= getUserName %></h4> </div>
+  <div class="col-md-2"> <h4><a href = "http://baratheon.dipr.partners.org/raTweets.html" target="_blank">CIRT Logs</a></h4> </div>
+  <div class="col-md-2"> <h4><a href = "http://baratheon.dipr.partners.org/cirt/indexEvent" target="_blank">Index Event</a></h4> </div>
+  <div class="col-md-2"> <h4><a href = "http://baratheon.dipr.partners.org/cirt/SAE" target="_blank">SAEAE</a></h4> </div>
+  <div class="col-md-2"> <h4><a href = "https://www.google.com/maps/d/u/1/edit?hl=en&authuser=1&mid=1eKAXD_hN-oj04iKAqsaO1aaKwlQ" target="_blank">CIRT Map</a></h4> </div>
+
+</div> <!-- end row -->
+
+
+
+	  <div class="jumbotron">
+	    <!-- <h1 class="text-center">Hello, CIRT! $username </h1> -->
+	    <h1 class="text-center">CIRT Active Site Management </h1>
+	  </div>
+	  
+	  <table id="example" class="display" cellspacing="0" width="100%">
+	    <thead>
+	      <tr>
+		<th>SiteID</th>
+		<th>PI</th>
+		<th>Clinic</th>
+		<th>CoI</th>
+		<th>SC</th>
+		<th>City</th>
+		<th>State</th>
+		<th>Liaison</th>
+		<!-- <th>StartedRunin</th> -->
+		<!-- <th>Randomized</th> -->
+		<!-- <th>BucketProgrammed</th> -->
+		<!-- <th>BucketByRA</th> -->
+	      </tr>
+	    </thead>
+	    
+	    <tfoot>
+	      <tr>
+		<th>SiteID</th>
+		<th>PI</th>
+		<th>Clinic</th>
+		<th>CoI</th>
+		<th>SC</th>
+		<th>City</th>
+		<th>State</th>
+		<th>Liaison</th>
+		<!-- <th>BucketProgrammed</th> -->
+		<!-- <th>BucketByRA</th> -->
+	      </tr>
+	    </tfoot>
+	  </table>
+	</div>
+</body>
+</html>

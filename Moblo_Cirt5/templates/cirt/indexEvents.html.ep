@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="utf-8">
+	<!--<link rel="shortcut icon" type="image/ico" href="http://www.datatables.net/favicon.ico">-->
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=2.0">
+
+	<title>Hello, CIRT!</title>
+	<link rel="stylesheet" type="text/css" href="/DataTables-1.10.5/media/css/jquery.dataTables.css">
+	<link rel="stylesheet" type="text/css" href="/DataTables-1.10.5/examples/resources/syntax/shCore.css">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<style type="text/css" class="init">
+
+	  <!-- tfoot { -->
+	  <!-- display: table-header-group; -->
+	  <!-- } -->
+
+	</style>
+	<link rel="shortcut icon" href="/images/fav_baratheon.ico">
+
+	<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="/DataTables-1.10.5/examples/resources/syntax/shCore.js"></script>
+	<script type="text/javascript" language="javascript" src="http://baratheon.dipr.partners.org/DataTables-1.10.5/examples/resources/demo.js"></script>
+	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <script>
+      $(function() {
+      $( ".datepicker" ).datepicker( { dateFormat: "yy-mm-dd" });
+      });
+    </script>
+
+
+	<script type="text/javascript" language="javascript" class="init">
+
+$(document).ready(function() {
+	
+	var table = $('#example').DataTable( {
+
+		<!--         initComplete: function () { -->
+	        <!--             this.api().columns([2,3,4,5,6,7,8, 9]).every( function () { -->
+	        <!-- //            this.api().columns().eq(1,3,4).each( function () { -->
+	        <!--                 var column = this; -->
+	        <!--                 var select = $('<select><option value=""></option></select>') -->
+                <!--                     .appendTo( $(column.footer()).empty() ) -->
+		<!--                     .on( 'change', function () { -->
+		<!--                         var val = $.fn.dataTable.util.escapeRegex( -->
+		<!--                             $(this).val() -->
+		<!--                         ); -->
+   	        <!--                         column -->
+		<!--                             .search( val ? '^'+val+'$' : '', true, false ) -->
+		<!--                             .draw(); -->
+		<!--                     } ); -->
+    	        <!--                 column.data().unique().sort().each( function ( d, j ) { -->
+		<!--                     select.append( '<option value="'+d+'">'+d+'</option>' ) -->
+		<!--                 } ); -->
+		<!--             } ); -->
+		<!--         }, -->
+                "aaSorting":[], <!-- disable initial sort-->
+                "iDisplayLength": 25,
+		"ajax": {
+		"url": "http://baratheon.dipr.partners.org/api/getIndexEvents/",
+		"dataSrc": ""
+		},
+		"columns": [
+		{ "data": "PatientID" },
+		{ "data": "ICFDate" },
+		{ "data": "ReceivedDate" },
+		{ "data": "IndexEvent" },
+		{ "data": "MI" },
+		{ "data": "CAD" },
+		{ "data": "MI_CAD" },
+		{ "data": "WaitingForMoreInfo" },
+		<!--			{ "data": "ChildBearing" },-->
+		{ "data": "AllRecords" },
+		{ "data": "Withdrawn" },
+		
+		{ "data": "Notif" },
+		{ "data": "NotifDate" }, 
+		
+		{ "data": "Reviewer" },
+		{ "data": "ReviewedDate" },
+		{ "data": "EDC_MI" },
+		{ "data": "EDC_CAD" },
+		{ "data": "IndexEventDate" },
+		{ "data": "DCCcomments" },
+		{ "data": "LiaisonComments" },
+		{ "data": "EnteredBy" }, 
+		{ "data": "Box" }, 
+		
+		<!-- { "data": "BucketByRA" } -->
+		]
+		} ); <!-- end table -->
+
+	var patid;
+	var $username = '<%== getUserName %>' ;
+
+   $("#NewIEvent").on('click', function( e ) {
+      <!-- console.log("HERE"); -->
+      <!-- alert("HERE"); -->
+      $("#CreateIEventModal").modal();
+   });
+
+		
+	$('#example tbody').on('dblclick', 'tr', function () {
+
+	   patid  = table.row( this ).data()["PatientID"].slice(-16, -4);
+
+		if ( $username == "Henry" || $username == "Cassandra" || $username == "Susan" || $username == "SierraH" || $username == "PatrickJ" || $username == "LanaK") { 
+		<!-- console.log( table.row( this ).data()  ); -->
+
+		$( '#myModalLabel' ).text( "Edit Index Event Information for " + patid );
+		$( '#IndexEventOverride' ).val( table.row( this ).data()["IndexEvent"] );
+		$( '#DateReceived' ).val( table.row( this ).data()["ReceivedDate"] );
+		$( '#MoreInfo' ).val( table.row( this ).data()["WaitingForMoreInfo"] );
+		$( '#AllRecords' ).val( table.row( this ).data()["AllRecords"] );
+		<!--  comments -->
+		$( '#Notif' ).val( table.row( this ).data()["Notif"] );
+		$( '#NotifDate' ).val( table.row( this ).data()["NotifDate"] );
+		$( '#Box' ).val( table.row( this ).data()["Box"] );
+		<!-- box -->		
+		     $( '#myModal' ).modal();
+		} <!-- end if -->
+
+		else {
+		   $( '#LiaisonModalLabel' ).text( "Comments on Index Event for " + patid );
+		   $( '#LiaisonModal' ).modal()
+		}
+	    } ); <!-- end dblclick -->
+
+
+	$('#iEventSave').click( function() {
+
+		var MyH = {};
+		
+		<!-- var DateReceived = $( '#DateReceived' ).val(); -->
+		<!-- var MoreInfo = $( '#MoreInfo' ).val(); -->
+		<!-- var AllRecords = $( '#AllRecords' ).val(); -->
+		<!-- var Notif = $( '#Notif' ).val(); -->
+		<!-- var NotifDate = $( '#NotifDate' ).val(); -->
+		<!-- var DCCcomments = $('#DCCcomments').val(); -->
+		<!-- var Box = $('#Box').val(); -->
+
+		<!-- console.log( $( '#IndexEventOverride' ).val() ); -->
+		
+		<!-- if ( $( '#DateReceived' ).val().length > 0 ) { -->
+		<!--    MyH['ReceivedDate'] =  $( '#DateReceived' ).val(); -->
+		<!-- } -->
+		<!-- if ( $( '#MoreInfo' ).val().length > 0 ) { -->
+		<!--    MyH['WaitingForMoreInfo'] =  $( '#MoreInfo' ).val(); -->
+		<!-- } -->
+		<!-- if ( $( '#AllRecords' ).val().length > 0 ) { -->
+		<!--    MyH['AllRecords'] =  $( '#AllRecords' ).val(); -->
+		<!-- } -->
+		<!-- if ( $( '#Notif' ).val().length > 0 ) { -->
+		<!--    MyH['Notif'] = $( '#Notif' ).val(); -->
+		<!-- } -->
+		<!-- if ( $( '#NotifDate' ).val().length > 0 ) { -->
+		<!--    MyH['NotifDate'] = $( '#NotifDate' ).val(); -->
+		<!-- } -->
+		<!-- if ( $( '#DCCcomments' ).val().length > 0 ) { -->
+		<!--    MyH['DCCcomments'] = $( '#DCCcomments' ).val(); -->
+		<!-- } -->
+		<!-- if ( $( '#Box' ).val().length > 0 ) { -->
+		<!--    MyH['Box'] = $( '#Box' ).val(); -->
+		<!-- } -->
+
+		   MyH['ReceivedDate'] =  $( '#DateReceived' ).val();
+		   MyH['IndexEvent'] =  $( '#IndexEventOverride' ).val();
+		   MyH['WaitingForMoreInfo'] =  $( '#MoreInfo' ).val();
+		   MyH['AllRecords'] =  $( '#AllRecords' ).val();
+		   MyH['Notif'] = $( '#Notif' ).val();
+		   MyH['NotifDate'] = $( '#NotifDate' ).val();
+
+		<!-- console.log( patid.substring(0,7) ); -->
+		<!-- console.log( $username ); -->
+		<!-- console.log( patid.substring(8,12) );		 -->
+
+		if ( $( '#DCCcomments' ).val().length > 0 ) {
+		   MyH['DCCcomments'] = $( '#DCCcomments' ).val();
+
+	    // create a log from indexEvent DCC comments
+	   	// only if there is a comment
+	    $.ajax({
+	   	type: "POST",
+	   	url: "http://baratheon.dipr.partners.org/api/createLog",
+	   	data: "siteid=" + patid.substring(0, 7) +"&" + "bwhStaff=#" + $username + "&message=#"+ patid.substring(8, 12) + " #indexEvent " + $('#DCCcomments').val() + "&hashtag=indexEvent " + patid.substring(8, 12) + " " + $username,
+
+	   	success: function() {
+	   	    console.log("success!!!");
+	   	},
+	   });
+
+		} // end if DCCcomments.val.length
+
+		   MyH['Box'] = $( '#Box' ).val();
+
+		<!-- for ( var i in MyH ) { -->
+		<!--    console.log( "* " + i  + " : " + MyH[i]); -->
+		<!-- } -->
+
+		console.log( Object.keys(MyH).map(function(x){return x + "=" + MyH[x];}).join('&') );
+		var myData = Object.keys(MyH).map(function(x){return x + "=" + MyH[x];}).join('&');
+
+		<!-- console.log( patid ); -->
+		<!-- console.log( $username ); -->
+
+		$.ajax({
+		   type: "POST",
+		   url: "http://baratheon.dipr.partners.org/api/updateIndexEvent",
+		   data: "patid="+ patid + "&" + myData,
+		   success: function() {
+		      console.log("success!!!");
+		      table.ajax.reload();
+		   },
+		});
+
+	   $('#myModal').modal('hide');
+		
+	}); 		<!-- end iEvent Save -->
+
+
+	$('#LiaisonCommentsSave').click( function() {
+
+		var MyH = {};
+		MyH['LiaisonComments'] = $( '#LiaisonComments' ).val();
+
+		var myData = Object.keys(MyH).map(function(x){return x + "=" + MyH[x];}).join('&');
+
+	    // create a log from indexEvent Liaison Comments
+	    $.ajax({
+	   	type: "POST",
+	   	url: "http://baratheon.dipr.partners.org/api/createLog",
+	   	data: "siteid=" + patid.substring(0, 7) +"&" + "bwhStaff=#" + $username + "&message=#"+ patid.substring(8, 12) + " #indexEvent " + $('#LiaisonComments').val() + "&hashtag=indexEvent " + patid.substring(8, 12) + " " + $username,
+
+	   	success: function() {
+	   	    console.log("success!!!");
+	   	},
+	   });
+
+		$.ajax({
+		   type: "POST",
+		   url: "http://baratheon.dipr.partners.org/api/updateIndexEvent",
+		   data: "patid="+ patid + "&" + myData,
+		   success: function() {
+		      console.log("success!!!");
+		      table.ajax.reload();
+		   },
+		});
+
+		$('#LiaisonModal').modal('hide');
+		
+	}); 		<!-- end LiaisonCommentsSave -->
+
+
+
+	$('#CreateIEventSave').click( function() {
+
+		var MyH = {};
+		
+		   MyH['PATID'] =  $( '#PATID' ).val();
+		   MyH['CONSDT'] =  $( '#CONSDT' ).val();
+		   MyH['ReceivedDate'] =  $( '#ReceivedDate' ).val();
+		   MyH['AGE'] =  $( '#AGE' ).val();
+		   MyH['GENDER'] = $( '#GENDER' ).val();
+
+		MyH['MI'] =  $( 'input[name="MI"]:checked' ).val();
+
+		if ( $( '#MIDT' ).val().length > 0 ) {
+		   MyH['MIDT'] = $( '#MIDT' ).val();
+		}
+
+		MyH['CAD'] =  $( 'input[name="CAD"]:checked' ).val();
+
+
+		if ( $( '#CAGDT' ).val().length > 0 ) {
+		   MyH['CAGDT'] = $( '#CAGDT' ).val();
+		}
+		<!-- console.log( patid.substring(0,7) ); -->
+		<!-- console.log( $username ); -->
+		<!-- console.log( patid.substring(8,12) );		 -->
+
+
+
+	   <!-- 	<\!-- for ( var i in MyH ) { -\-> -->
+	   <!-- 	<\!--    console.log( "* " + i  + " : " + MyH[i]); -\-> -->
+	   <!-- 	<\!-- } -\-> -->
+
+	   	console.log( Object.keys(MyH).map(function(x){return x + "=" + MyH[x];}).join('&') );
+	   	var myData = Object.keys(MyH).map(function(x){return x + "=" + MyH[x];}).join('&');
+
+	   <!-- 	<\!-- console.log( patid ); -\-> -->
+	   <!-- 	<\!-- console.log( $username ); -\-> -->
+
+	   	$.ajax({
+	   	   type: "GET",
+	   	   url: "http://baratheon.dipr.partners.org/api/createIEvent",
+	   	   data: myData,
+	   	   success: function() {
+	   	      console.log("success!!!");
+	   	      table.ajax.reload();
+	   	   },
+	   	});
+
+	   $('#CreateIEventModal').modal('hide');
+		
+	}); 		<!-- end CreateIEventSave -->
+
+
+    <!-- clear modal page after closing or submitting -->
+    $('.modal').on('hidden.bs.modal', function() {
+       $(this)
+              .find('input[type="text"],textarea,select' ).val('').end()
+              .find('input[type="checkbox"],input[type="radio"]' ).prop("checked", "").end();
+    });
+
+			
+} );
+
+
+
+	</script>
+
+
+</head>
+
+<body class="dt-example">
+<!-- <div class="container"> -->
+  <div class="col-md-2"><input class="btn btn-success" id="NewIEvent" value="New Index Event"></div>
+  <div class="col-md-2"><a href="<%=url_for('waitingOnICF')%>">Waiting For ICF </a></div>
+  <div class="col-md-3"><a href="http://baratheon.dipr.partners.org/api/getIndexEventsCSV.csv">Download Index Events</a></div>
+<!-- </div> -->
+	  <table id="example" class="display" cellspacing="0" width="100%">
+	    <thead>
+	      <tr>
+		<th>PatientID</th>
+		<th>ICFDate</th>
+		<th>ReceivedDate</th>
+		<th>IndexEvent</th>
+		<th>MI</th>
+		<th>CAD</th>
+		<th>Both</th>
+		<th>MoreInfo?</th>
+<!--		<th>Child Bearing</th> -->
+		<th>Need More Records</th>
+		<th>Withdrawn</th>
+		<th>Notif</th>
+		<th>NotifDate</th>		
+		<th>Reviewer</th>
+		<th>ReviewedDate</th>
+		<th>EDC MI</th>
+		<th>EDC CAD</th>
+		<th>Event Date</th>
+		<th>DCC Comments</th>
+		<th>Liaison Comments</th>
+		<th>EnteredBy</th>
+		<th>Box</th>
+
+	      </tr>
+	    </thead>
+	    
+	    <tfoot>
+	      <tr>
+		<th>PatientID</th>
+		<th>ICFDate</th>
+		<th>ReceivedDate</th>
+		<th>IndexEvent</th>
+		<th>MI</th>
+		<th>CAD</th>
+		<th>Both</th>
+		<th>MoreInfo?</th>
+<!--		<th>Child Bearing</th> -->
+		<th>Need More Records</th>
+		<th>Withdrawn</th>
+		<th>Notif</th>
+		<th>NotifDate</th>
+		<th>Reviewer</th>
+		<th>ReviewedDate</th>
+		<th>EDC MI</th>
+		<th>EDC CAD</th>
+		<th>Event Date</th>
+		<th>DCC Comments</th>
+		<th>Liaison Comments</th>
+		<th>EnteredBy</th>
+		<th>Box</th>
+	      </tr>
+	    </tfoot>
+	  </table>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+	<p><div>
+	  Received Date : <input type="text" class="datepicker" name="DateReceived" id="DateReceived">
+	</div></p>
+	<hr>
+
+	<p><div>
+	  IndexEvent Override : 
+	  <select name="IndexEventOverride" id="IndexEventOverride">
+	    <option></option>
+	    <option>yes</option>
+	    <option>No</option>
+	  </select>
+	</div></p>
+
+	<p><div>
+	  Waiting For More Info : 
+	  <select name="MoreInfo" id="MoreInfo">
+	    <option></option>
+	    <option>yes</option>
+	  </select>
+	</div></p>
+
+	<p><div>
+	  Need More Records : 
+	  <select name="AllRecords" id="AllRecords">
+	    <option></option>
+	    <option>yes</option>
+	  </select>
+	</div></p>
+
+	<p><div>
+	  DCC Comments : </br>
+	  <textarea id="DCCcomments" rows="2" cols="50"></textarea>
+	</div></p>
+
+	<p><div>
+	  Notification : 
+	  <select name="Notif" id="Notif">
+	    <option></option>
+	    <option>1st</option>
+	    <option>2nd</option>
+	  </select>
+	</div></p>
+
+	<p><div>
+	  Notification Date : <input type="text" class="datepicker" name="NotifDate" id="NotifDate">
+	</div></p>
+
+	<hr>
+
+	<p><div>
+	  Box : <input type="text" name="Box" id="Box">
+	</div></p>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" name="iEventSave" id="iEventSave">Save changes</button>
+      </div>
+
+    </div>
+  </div>
+</div> <!-- myModal ends-->
+
+<!-- LiaisonModal -->
+<div class="modal fade" id="LiaisonModal" tabindex="-1" role="dialog" aria-labelledby="LiaisonModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="LiaisonModalLabel">Modal title</h4>
+      </div>
+
+      <div class="modal-body">
+	<p><div>
+	  Liaison Comments : </br>
+	  <textarea id="LiaisonComments" rows="2" cols="50"></textarea>
+	</div></p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" name="LiaisonCommentsSave" id="LiaisonCommentsSave">Save</button>
+      </div>
+    </div>
+  </div>
+</div> <!-- myModal ends-->
+
+
+<!-- CreateIEventModal -->
+<div class="modal fade" id="CreateIEventModal" tabindex="-1" role="dialog" aria-labelledby="CreateIEventModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="CreateIEventModalLabel">Create New Index Event</h4>
+      </div>
+
+      <div class="modal-body">
+	<form role="form">
+
+          <div class="form-group row">
+	    <div class="col-sm-2"> <label>PatientID</label></div>
+            <div class="col-sm-4">
+	       <input type="text" class="form-control" id="PATID" placeholder="" size="15">
+	      <!-- <input type="text" class="form-control" id="PATID" placeholder="" size="15" onchange="validatePID(this.value);"> 
+	      <span id="validatePIDstatus"></span> -->
+	    </div>
+	  </div>
+	  
+          <div class="form-group row">
+            <div class="col-sm-2"><label for="ICFDT">ICF Date</label></div>
+            <div class="col-sm-4"><input type="text" class="form-control datepicker" id="CONSDT" name="CONSDT" placeholder="YYYY-MM-DD"></div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-2"><label for="RecDT">Received Date</label></div>
+            <div class="col-sm-4"><input type="text" class="form-control datepicker" id="ReceivedDate" name="ReceivedDate" placeholder="YYYY-MM-DD"></div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-2"><label for="Age">Age</label></div>
+            <div class="col-sm-2"><input type="text" class="form-control" id="AGE" name="AGE"></div>
+            <div class="col-sm-2"><label for="Gender">Gender</label></div>
+            <div class="col-sm-4">
+	      <select class="form-control" id="GENDER" name="GENDER">
+		<option></option>
+		<option value="1">Male</option>
+		<option value="2">Female</option>
+	      </select>
+	    </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="radio">
+              <div class='col-sm-2'> <b>EDC MI</b> </div>
+	      <div class='col-sm-2'> <label><input type="radio" name="MI" id="MIyes" value="Yes">Yes</label> </div>
+	      <div class='col-sm-2'> <label><input type="radio" name="MI" id="MIno" value="No">No</label> </div>
+	      <div class='col-sm-2'> <label><input type="radio" name="MI" id="MIna" value="NA">NA</label> </div>
+	    </div>
+	  </div>
+
+          <div class="form-group row">
+            <div class="col-sm-2"><label for="MIDT">MI Date</label></div>
+            <div class="col-sm-4"><input type="text" class="form-control" id="MIDT" name="MIDT" placeholder="YYYY-MM-DD"></div>
+          </div>
+
+          <div class="form-group row">
+            <div class="radio">
+              <div class='col-sm-2'> <b>EDC CAD</b> </div>
+	      <div class='col-sm-2'> <label><input type="radio" name="CAD" id="CADyes" value="Yes">Yes</label> </div>
+	      <div class='col-sm-2'> <label><input type="radio" name="CAD" id="CADno" value="No">No</label> </div>
+	      <div class='col-sm-2'> <label><input type="radio" name="CAD" id="CADna" value="NA">NA</label> </div>
+	    </div>
+	  </div>
+ 
+         <div class="form-group row">
+            <div class="col-sm-2"><label for="CADDT">CAD Date</label></div>
+            <div class="col-sm-4"><input type="text" class="form-control" id="CAGDT" name="CAGDT" placeholder="YYYY-MM-DD"></div>
+          </div>
+
+
+	</form>
+
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" name="CreateIEventSave" id="CreateIEventSave">Save</button>
+      </div>
+    </div>
+  </div>
+</div> <!-- myModal ends-->
+
+
+
+
+</body>

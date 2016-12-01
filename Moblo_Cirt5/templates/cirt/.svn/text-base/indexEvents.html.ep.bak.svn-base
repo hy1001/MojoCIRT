@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="utf-8">
+	<!--<link rel="shortcut icon" type="image/ico" href="http://www.datatables.net/favicon.ico">-->
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=2.0">
+
+	<title>Hello, CIRT!</title>
+	<link rel="stylesheet" type="text/css" href="/DataTables-1.10.5/media/css/jquery.dataTables.css">
+	<link rel="stylesheet" type="text/css" href="/DataTables-1.10.5/examples/resources/syntax/shCore.css">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<style type="text/css" class="init">
+
+	</style>
+	<link rel="shortcut icon" href="/images/fav_baratheon.ico">
+
+	<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="/DataTables-1.10.5/examples/resources/syntax/shCore.js"></script>
+	<script type="text/javascript" language="javascript" src="http://tully.dpm.bwh.harvard.edu/DataTables-1.10.5/examples/resources/demo.js"></script>
+	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
+
+	<script type="text/javascript" language="javascript" class="init">
+
+$(document).ready(function() {
+	$('#example').dataTable( {
+                "iDisplayLength": 25,
+		"ajax": {
+			"url": "http://tully.dpm.bwh.harvard.edu/api/getIndexEvents/",
+			"dataSrc": ""
+		},
+		"columns": [
+			{ "data": "PatientID" },
+			{ "data": "ReceivedDate" },
+			{ "data": "IndexEvent" },
+			{ "data": "MI" },
+			{ "data": "CAD" },
+			{ "data": "MI_CAD" },
+			{ "data": "WaitingForMoreInfo" },
+			{ "data": "ChildBearing" },
+			{ "data": "AllRecords" },
+			{ "data": "Withdrawn" },
+			{ "data": "Reviewer" },
+			{ "data": "ReviewedDate" },
+			{ "data": "EDC_MI" },
+			{ "data": "EDC_CAD" },
+			{ "data": "IndexEventDate" },
+			{ "data": "DCCcomments" },
+			{ "data": "LiaisonComments" },
+			<!-- { "data": "BucketProgrammed" }, -->
+			<!-- { "data": "BucketByRA" } -->
+		]
+	} );
+} );
+
+	</script>
+
+
+</head>
+
+<body class="dt-example">
+
+	  <table id="example" class="display" cellspacing="0" width="100%">
+	    <thead>
+	      <tr>
+		<th>PatientID</th>
+		<th>ReceivedDate</th>
+		<th>IndexEvent</th>
+		<th>MI</th>
+		<th>CAD</th>
+		<th>Both</th>
+		<th>MoreInfo?</th>
+		<th>Child Bearing</th>
+		<th>All Records</th>
+		<th>Withdrawn</th>
+		<th>Reviewer</th>
+		<th>ReviewedDate</th>
+		<th>EDC MI</th>
+		<th>EDC CAD</th>
+		<th>Event Date</th>
+		<th>DCC Comments</th>
+		<th>Liaison Comments</th>
+	      </tr>
+	    </thead>
+	    
+	    <tfoot>
+	      <tr>
+		<th>PatientID</th>
+		<th>ReceivedDate</th>
+		<th>IndexEvent</th>
+		<th>MI</th>
+		<th>CAD</th>
+		<th>Both</th>
+		<th>MoreInfo?</th>
+		<th>Child Bearing</th>
+		<th>All Records</th>
+		<th>Withdrawn</th>
+		<th>Reviewer</th>
+		<th>ReviewedDate</th>
+		<th>EDC MI</th>
+		<th>EDC CAD</th>
+		<th>Event Date</th>
+		<th>DCC Comments</th>
+		<th>Liaison Comments</th>
+	      </tr>
+	    </tfoot>
+	  </table>
+
+</body>

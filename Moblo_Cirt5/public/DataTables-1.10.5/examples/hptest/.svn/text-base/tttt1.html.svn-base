@@ -1,0 +1,90 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title> - jsFiddle demo</title>
+  
+  <script type="text/javascript" src="http://code.jquery.com/jquery-compat-git.js"></script>
+  
+      <script type="text/javascript" src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css">
+      <link rel="stylesheet" type="text/css" href="http://vitalets.github.com/x-editable/assets/x-editable/bootstrap-editable/css/bootstrap-editable.css">
+      <script type="text/javascript" src="http://vitalets.github.com/x-editable/assets/x-editable/bootstrap-editable/js/bootstrap-editable.js"></script>
+      <script type="text/javascript" src="http://vitalets.github.com/x-editable/assets/mockjax/jquery.mockjax.js"></script>
+
+      <link rel="stylesheet" type="text/css" href="./jquery.dataTables.css">
+      <script type="text/javascript" src="./jquery.dataTables.min.js"></script>
+
+      <script type="text/javascript" src="./dataTables.bootstrap.js"></script>
+      <link rel="stylesheet" type="text/css" href="./dataTables.bootstrap.css">
+
+  <style type="text/css">
+    
+
+  </style>
+  
+
+
+<script type="text/javascript">//<![CDATA[ 
+$(function(){
+
+    $(document).ready(function() {
+      $('#example').dataTable({
+          "iDisplayLength": 25
+        });
+      });
+
+
+$('#example a').editable({
+    type: 'text',
+    name: 'username',
+    url: '/post',
+    title: 'Enter username'
+});
+
+//ajax emulation
+$.mockjax({
+    url: '/post',
+    responseTime: 200
+}); 
+
+});//]]>  
+
+</script>
+
+
+</head>
+<body>
+  <p>X-editable: create editable column in table.<br>
+ As pk is unique in each row, you should put it in data-pk attribute.  
+</p>
+<div class="dataTable_wrapper form-inline" style="margin: 150px">
+    <!-- <table id="users" class="table table-bordered table-condensed "> -->
+    <table id="example" class="display">
+        <tbody><tr><th>#</th><th>name</th><th>age</th></tr>
+        <tr>
+            <td>1</td>
+            <td><a class="editable editable-click" href="#" data-pk="1">Mike</a></td>
+            <td>21</td>       
+        </tr>
+        
+        <tr>
+            <td>2</td>
+            <td><a class="editable editable-click" href="#" data-pk="2">John</a></td>
+            <td>28</td>       
+        </tr>        
+        
+        <tr>
+            <td>3</td>
+            <td><a class="editable editable-click" href="#" data-pk="3">Mary</a></td>
+            <td>24</td>       
+        </tr>        
+        
+    </tbody></table>    
+</div>
+  
+
+
+
+
+
+</body></html>

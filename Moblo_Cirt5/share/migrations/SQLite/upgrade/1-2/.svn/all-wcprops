@@ -1,0 +1,11 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/bwh-cirtdcc/!svn/ver/21/mojo/Moblo_Cirt5/share/migrations/SQLite/upgrade/1-2
+END
+001-auto.sql
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/bwh-cirtdcc/!svn/ver/21/mojo/Moblo_Cirt5/share/migrations/SQLite/upgrade/1-2/001-auto.sql
+END

@@ -1,0 +1,230 @@
+<body data-spy="scroll" data-target="#myScrollspy">
+  <div class="container-fluid">
+
+    <div class="row">
+
+      <div class="col-md-2">
+	%= form_for 'do_logout' => begin
+	%= submit_button 'Log me out', class => 'btn btn-success'
+	% end
+      </div>
+      <div class="col-md-2"> <h4>Logged in as <%= getUserName %></h4> </div>
+
+    </div>
+
+    <div class="container">
+      <div class="jumbotron">
+        <h1 class="text-center">Whats up, <%= $raName %>!</h1>
+      </div>
+    </div> 
+
+    <div class="row">
+      <div class="col-xs-2" id="myScrollspy"> 
+	<ul class="nav nav-tabs nav-stacked" data-spy="affix" data-offset-top="125">
+          <li class="active"><a href="#SiteMetrics">Site Metrics</a></li>
+          <li><a href="#LabDataIssues">Lab Data Issues</a></li>
+          <li><a href="#MissingLabs">Missing Labs</a></li>
+          <li><a href="#EDCissues">EDC issues</a></li>
+          <li><a href="#MedRecs">MedRecs</a></li>
+          <li><a href="#BL2">BucketList2</a></li>
+          <li><a href="#V2">V2s & V4s</a></li>
+	</ul>
+      </div>
+
+      <div class="col-xs-8">
+
+	<h2 id="SiteMetrics">Site Metrics </h2>
+	<!-- <table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/siteMetrics/<%= $raName %>" data-height="460"> -->
+	<table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/siteMetrics/<%= $raName %>">
+	  <thead>
+            <tr>
+              <th data-field="SiteID">SiteID</th>
+              <th data-field="Liaison">Liaison</th>
+              <th data-field="SiteInitializationDate">Initialization Date</th>
+              <th data-field="NInformedConsent">Informed Consent</th>
+              <th data-field="NScreened">Screened</th>
+              <th data-field="MostRecentScreeningDate">Most Recent Screening Date</th>
+              <th data-field="NStartedRunin">Started Run-in</th>
+              <th data-field="NRandomized">Randomized</th>
+            </tr>
+	  </thead>
+	</table>  
+
+	<hr>
+
+	<h2>Lab Data</h2>
+	<h3 id="LabDataIssues">Lab Data Issues</h3>
+	<p> 
+	  <div style="font-size:13.5px;">
+	    <table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/labIssues/<%= $raName %>" data-cache="false" data-card-view="true">
+	      <thead>
+		<tr>
+		  <!-- <th data-field="LCASpecimen">LCA Specimen</th> -->
+		  <th data-field="isNew">New</th>
+		  <th data-field="Problem">Problem</th>
+		  <th data-field="PatientID">Patient ID</th>
+		  <th data-field="VisitDesignation">Visit Designation</th>
+		  <th data-field="CollectionDate">Collection</th>
+		  <th data-field="Gender">Gender</th>
+		  <th data-field="BirthDate">Date of Birth</th>
+		  <th data-field="Initials">Initials</th>
+		  <th data-field="EDCGender">EDC Gender</th>
+		  <th data-field="EDCBirthDate">EDC Date of Birth</th>
+		  <th data-field="EDCInitials">EDC Initials</th>
+		  <th data-field="MissingLabs">Missing labs</th>
+		  <th data-field="BwhComments">BWH Comments</th>
+		  <th data-field="LapCorpCommnets">LapCorp Comments</th>
+		  <th data-field="raComments">RA Comments</th>
+		</tr>
+	      </thead>
+	    </table> 
+	  </div>
+	</p>
+	<hr>
+	<h3 id="MissingLabs">Missing Lab</h3>
+	<p>
+	  <table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/missingLab/<%= $raName %>" data-cache="false">
+	    <thead>
+              <tr>
+		<th data-field="PatientID">Patient ID</th>
+		<th data-field="VisitDesignation">Visit Designation</th>
+		<th data-field="VisitDate">Visit Date</th>
+		<th data-field="BloodCollectionDate">Blood Collection Date</th>
+		<th data-field="NextVisitDate">Next Visit Date</th>
+		<th data-field="BwhComments">BWH Comments</th>
+		<th data-field="raComments">RA Comments</th>
+              </tr>
+	    </thead>
+	  </table>
+	</p>
+	<hr>
+
+	<h3 id="EDCissues">Lab - EDC issues</h3>
+	<p><table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/edcIncomplete/<%= $raName %>" data-cache="false">
+	    <thead>
+              <tr>
+		<th data-field="PatientID">Patient ID</th>
+		<th data-field="VisitDesignation">Visit Designation</th>
+		<th data-field="VisitDate">Visit Date</th>
+		<th data-field="CentralLabCollectedDate">Central Lab Collected Date</th>
+		<th data-field="LabDate">Lab Date</th>
+		<th data-field="Problem">Problem</th>
+              </tr>
+	    </thead>
+	  </table>
+	</p>
+	<hr>
+
+	<h2 id="MedRecs">MedRecs</h2>
+	<p>
+	  <table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/medRecs/<%= $raName %>" data-cache="false">
+	    <thead>
+              <tr>
+		<th data-field="PatientID">Patient ID</th>
+		<th data-field="CollectionDate">CollectionDate</th>
+		<th data-field="DateReceivedMedRecs">Date Received Med Recs</th>
+		<th data-field="MedRecReviewResult">Med Rec Review Result</th>
+              </tr>
+	    </thead>
+	  </table>
+	</p>
+	<hr>
+
+
+
+	<h2 id="BL2">BucketList2</h2>
+
+	<h3 id="TA">TA Report </h3>
+	<p>
+	  <table data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/taReport/<%= $raName %>" data-cache="false" >
+	    <thead>
+              <tr>
+		<th data-field="PatientID">Patient ID</th>
+		<th data-field="VisitOfLastTARun">Visit of last TA Run</th>
+		<th data-field="Problem">Problem</th>
+		<th data-field="DateMostRecentLab">Date of Most Recent Lab</th>
+		<th data-field="DateLastVisit">Date of Last Visit</th>
+		<th data-field="DateLastTARun">Date of Last TA Run</th>
+		<!--            <th data-field="ActionRequired">Action Required</th> -->
+              </tr>
+	    </thead>
+	  </table>
+	</p>
+	<hr>
+
+
+	<h3 id="TempStop">Temp Stops</h3>
+	<p>
+	  <table id="tempStopTable"  data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/tempStop/<%= $raName %>" data-cache="false" data-card-view="false">
+	    <thead>
+              <tr>
+		<th data-field="PatientID">Patient ID</th>
+		<th data-field="StopDate">Stop Date</th>
+		<th data-field="DaysOff">Days Off</th>
+		<th data-field="Reason">Reason</th>
+		<th data-field="Comments">Comments</th>
+		<th data-field="MostRecentVisitDate">Most Recent Visit Date</th>
+		<th data-field="FollowUpDate">FollowUp Date</th>
+		<th data-field="ReVisitDT" data-sortable="true">Revisit Date</th>
+              </tr>
+	    </thead>
+	  </table>
+	</p>
+
+	<h3 id="RecPermStop">Recoverable Perm Stops</h3>
+	<p>
+	  <table id="recvPermStopTable" data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/recvPermStop/<%= $raName %>" data-cache="false">
+	    <thead>
+              <tr>
+		<th data-field="PatientID">Patient ID</th>
+		<th data-field="StopDate">Stop Date</th>
+		<th data-field="DaysOff">Days Off</th>
+		<th data-field="Reason">Reason</th>
+		<th data-field="Comments">Comments</th>
+		<th data-field="MostRecentVisitDate">Most Recent Visit Date</th>
+		<th data-field="FollowUpDate">FollowUp Date</th>
+		<th data-field="ReVisitDT" data-sortable="true">Revisit Date</th>
+              </tr>
+	    </thead>
+	  </table>
+	</p>
+	<hr>
+
+	<h2 id="V2">Scheduled V2s</h2>
+	<p>
+	  <table id="V2"  data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/getV2s/<%= $raName %>" data-cache="false" data-card-view="false">
+	    <thead>
+              <tr>
+		<th data-field="PatientID">Patient ID</th>
+		<th data-field="V1Date" data-sortable="true">V1 Date</th>
+		<th data-field="V2Date" data-sortable="true">V2 Date</th>
+              </tr>
+	    </thead>
+	  </table>
+	</p>
+	<hr>
+
+	<h2 id="V4">Scheduled V4s</h2>
+	<p>
+	  <table id="V2"  data-toggle="table" data-url="http://tully.dpm.bwh.harvard.edu/api/getV4s/<%= $raName %>" data-cache="false" data-card-view="false">
+	    <thead>
+              <tr>
+		<th data-field="PatientID">Patient ID</th>
+		<th data-field="V3Date" data-sortable="true">V3 Date</th>
+		<th data-field="CentralLabDate">Central Lab Date</th>
+		<th data-field="NextVisitDate" data-sortable="true">Next Visit Date</th>
+              </tr>
+	    </thead>
+	  </table>
+	</p>
+
+
+	<p class="endpadding"></p>
+      </div> 
+      
+    </div> 
+
+  </div> <!-- row -->
+</div> <!-- container-fluid -->
+
+</body>

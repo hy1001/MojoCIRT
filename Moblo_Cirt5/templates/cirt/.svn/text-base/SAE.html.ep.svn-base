@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="utf-8">
+	<!--<link rel="shortcut icon" type="image/ico" href="http://www.datatables.net/favicon.ico">-->
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=2.0">
+
+	<title>Hello, CIRT SAE!</title>
+	<link rel="stylesheet" type="text/css" href="/DataTables-1.10.5/media/css/jquery.dataTables.css">
+	<link rel="stylesheet" type="text/css" href="/DataTables-1.10.5/examples/resources/syntax/shCore.css">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<style type="text/css" class="init">
+
+
+	  form span
+	  {
+	  color:red;
+	  font-size:12px;
+	  font-style:italic;
+	  }
+
+	</style>
+	<link rel="shortcut icon" href="/images/fav_baratheon.ico">
+
+	<!-- <script src="/eternicode-bootstrap-datepicker-b6844d9/js/bootstrap-datepicker.js"></script> -->
+	<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="/DataTables-1.10.5/examples/resources/syntax/shCore.js"></script>
+	<script type="text/javascript" language="javascript" src="http://tully.dpm.bwh.harvard.edu/DataTables-1.10.5/examples/resources/demo.js"></script>
+	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.10/js/jquery.dataTables.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <!-- <script> -->
+    <!--   $(function() { -->
+    <!--      $( ".datepicker" ).datepicker( { dateFormat: "yy-mm-dd" }); -->
+    <!--   }); -->
+    <!-- </script> -->
+
+	<script type="text/javascript" language="javascript" class="init">
+
+$(document).ready(function() {
+	
+	var table = $('#example').DataTable( {
+
+		"order" : [3, 'desc'], // order by REPORTEDDT
+                "iDisplayLength": 25,
+		"ajax": "http://tully.dpm.bwh.harvard.edu/api/getSAEs"
+
+		, "columns": [
+	{ "data" : "PATID" },
+	{ "data" : "EVENT" },
+	{ "data" : "RECNO" },
+	{ "data" : "REPORTEDDT" }, 
+	{ "data" : "STARTDT" },
+	{ "data" : "DTMedRecRecieved" },
+	{ "data" : "1stReqDT" },
+	{ "data" : "1stReqBy" },
+	{ "data" : "2ndReqDT" },
+	{ "data" : "2ndReqBy" },
+	{ "data" : "3rdReqDT" },
+	{ "data" : "3rdReqBy" },
+	{ "data" : "Notes" },
+	{ "data" : "RequestedByMM" },
+	{ "data" : "DTSentToMM" },
+	{ "data" : "Filed" },
+	{ "data" : "ScanID" },
+	{ "data" : "BoxNo" }
+			      ]
+	    } ); <!-- end table -->
+
+	var patid;
+	var $username = '<%== getUserName %>' ;
+
+	$('#example tbody').on('dblclick', 'tr', function () {
+		patid  = table.row( this ).data()["PATID"];
+		recno  = table.row( this ).data()["RECNO"];
+
+		$('#UpdateSAEModalLabel').text("Update SAE for " + patid + " AE # " + recno );
+
+		$( '#2ndReqDT' ).val( table.row( this ).data()["2ndReqDT"] );
+		$( '#2ndReqBy' ).val( table.row( this ).data()["2ndReqBy"] );
+		$( '#3rdReqDT' ).val( table.row( this ).data()["3rdReqDT"] );
+		$( '#3rdReqBy' ).val( table.row( this ).data()["3rdReqBy"] );
+
+		$( '#DTMedRecRecieved' ).val( table.row( this ).data()["DTMedRecRecieved"] );
+		$( '#ClinicianReview' ).val( table.row( this ).data()["ClinicianReview"] );
+		$( '#ScanID' ).val( table.row( this ).data()["ScanID"] );
+		$( '#RequestedByMM' ).prop('checked', table.row( this ).data()["RequestedByMM"] );
+		$( '#DTSentToMM' ).val( table.row( this ).data()["DTSentToMM"] );
+		$( '#Filed' ).prop('checked', table.row( this ).data()["Filed"] );
+		$( '#BoxNo' ).val( table.row( this ).data()["BoxNo"] );
+		
+		$("#UpdateSAEModal").modal();
+		
+	    } ); <!-- end dblclick -->
+		      
+	
+	$( ".datepicker" ).datepicker( { dateFormat: "yy-mm-dd" });
+	
+	
+	$('#CreateSAESave').click( function() {
+		
+		var MyH = {};
+		
+		MyH['PATID'] =  $( '#PATID' ).val();
+		MyH['EVENT'] =  $( '#EVENT' ).val();
+		MyH['RECNO'] =  $( '#RECNO' ).val();
+		MyH['STARTDT'] =  $( '#STARTDT' ).val();
+		MyH['ENDPOINT'] =  $( 'input[name="ENDPOINT"]:checked' ).val();
+		MyH['RELATED'] = $( 'input[name="RELATED"]:checked' ).val();
+		MyH['UNEXPECTED'] = $( 'input[name="UNEXPECTED"]:checked' ).val();
+		MyH['Randomized'] = $( 'input[name="Randomized"]:checked' ).val();
+		MyH['1stReqDT'] =  $( '#DTMedRecRequested' ).val();
+		MyH['1stReqBy'] =  $username;
+
+		if ( $( '#CNotes' ).val().length > 0 ) {
+		    MyH['Notes'] = $( '#CNotes' ).val();
+	    
+		    // // create a log from indexEvent DCC comments
+		    // // only if there is a comment
+		    // $.ajax({
+		    // 	    type: "POST",
+		    // 		url: "http://tully.dpm.bwh.harvard.edu/api/createLog",
+		    // 		data: "siteid=" + patid.substring(0, 7) +"&" + "bwhStaff=#" + $username + "&message=#"+ patid.substring(8, 12) + " #indexEvent " + $('#DCCcomments').val() + "&hashtag=indexEvent " + patid.substring(8, 12) + " " + $username,
+		    // 		success: function() {
+		    // 		console.log("success!!!");
+		    // 	    },
+		    // 		});
+
+		} // end if DCCcomments.val.length
+	
+		//console.log( Object.keys(MyH).map(function(x){return x + "=" + MyH[x];}).join('&') );
+		var myData = Object.keys(MyH).map(function(x){return x + "=" + MyH[x];}).join('&');
+	
+		$.ajax({
+			type: "POST",
+			    url: "http://tully.dpm.bwh.harvard.edu/api/createSAE",
+			    data: myData,
+			    success: function()
+			    {
+				//console.log("success!!!");
+				table.ajax.reload();
+			    },
+			    });
+		
+		$('#CreateSAEModal').modal('hide');
+		
+	    }); // 		<!-- end CreateSAESave -->
+	    
+	
+	$('#UpdateSAESave').click( function() {
+		
+		var MyH = {};
+		
+		MyH['PATID'] =  patid;
+		MyH['RECNO'] =  recno;
+
+		// first time to input 2nd Request
+		if( $('#2ndReqDT').val().length > 0 &&  $('#2ndReqBy').val().length == 0 ) {
+		console.log( $('#2ndReqBy').val() );
+		    MyH['2ndReqDT'] = $( '#2ndReqDT' ).val();
+		    MyH['2ndReqBy'] = $username;
+		}
+
+		// first time to input 3rd Request
+		if( $('#3rdReqDT').val().length > 0 && $('#3rdReqBy').val().length == 0 ) {
+		    MyH['3rdReqDT'] = $( '#3rdReqDT' ).val();
+		    MyH['3rdReqBy'] = $username;
+		}
+
+		MyH['DTMedRecRecieved'] = $( '#DTMedRecRecieved' ).val();
+		MyH['ClinicianReview'] = $( '#ClinicianReview' ).val();
+		
+		if( $('#RequestedByMM').is(':checked') ) {
+		    MyH['RequestedByMM'] = "yes";
+		} else {
+		    MyH['RequestedByMM'] = "";
+		}
+		MyH['DTSentToMM'] = $( '#DTSentToMM' ).val();
+		
+		if( $('#Filed').is(':checked') ) {
+		    MyH['Filed'] = "yes";
+		} else {
+		    MyH['Filed'] = "";
+		}
+		MyH['ScanID'] = $( '#ScanID' ).val();
+		MyH['BoxNo'] = $( '#BoxNo' ).val();
+		
+		if ( $( '#UNotes' ).val().length > 0 ) {
+		    MyH['Notes'] = $( '#UNotes' ).val();
+		    
+		    // // create a log from indexEvent DCC comments
+		    // // only if there is a comment
+		    // $.ajax({
+		    // 	    type: "POST",
+		    // 		url: "http://tully.dpm.bwh.harvard.edu/api/createLog",
+		    // 		data: "siteid=" + patid.substring(0, 7) +"&" + "bwhStaff=#" + $username + "&message=#"+ patid.substring(8, 12) + " #indexEvent " + $('#DCCcomments').val() + "&hashtag=indexEvent " + patid.substring(8, 12) + " " + $username,
+		    // 		success: function() {
+		    // 		console.log("success!!!");
+		    // 	    },
+		    // 		});
+		    
+		} // end if DCCcomments.val.length
+		
+		//console.log( Object.keys(MyH).map(function(x){return x + "=" + MyH[x];}).join('&') );
+		var myData = Object.keys(MyH).map(function(x){return x + "=" + MyH[x];}).join('&');
+		
+		$.ajax({
+			type: "POST",
+			    url: "http://tully.dpm.bwh.harvard.edu/api/updateSAE",
+			    data: myData,
+			    success: function()
+			    {
+				console.log("success!!!");
+				table.ajax.reload();
+			    }
+		    });
+		
+		$('#UpdateSAEModal').modal('hide');
+		
+	    }); 		<!-- end UpdateSAESave -->
+				     
+	
+    } );
+
+
+	</script>
+
+</head>
+
+<body class="dt-example">
+   <input class="btn btn-success" id="NewSAE" value="New SAE">
+<div class="container">
+  <div class="col-md-2"></div>
+</div>
+	  <table id="example" class="display" cellspacing="0" width="100%">
+	    <thead>
+	      <tr>
+	  	<th>PatientID</th>
+	  	<th>Event</th>
+	  	<th>AE No.</th>
+	  	<th>Reported</th>
+	  	<th>StartDT</th>
+	  	<th>ReceivedDT</th>
+	  	<th>1stReqDT</th>
+	  	<th>By</th>
+	  	<th>2ndReqDT</th>
+	  	<th>By</th>
+	  	<th>3rdReqDT</th>
+	  	<th>By</th>
+	  	<th>Notes</th>
+	  	<th>RequestedByMM</th>
+	  	<th>DTSent2MM</th>
+	  	<th>Filed</th>
+	  	<th>ScanID</th>
+	  	<th>Box No.</th>
+	      </tr>
+	    </thead>
+	    
+	    <tfoot>
+	      <tr>
+	  	<th>PatientID</th>
+	  	<th>Event</th>
+	  	<th>AE No.</th>
+	  	<th>Reported</th>
+	  	<th>StartDT</th>
+	  	<th>ReceivedDT</th>
+	  	<th>1stReqDT</th>
+	  	<th>By</th>
+	  	<th>2ndReqDT</th>
+	  	<th>By</th>
+	  	<th>3rdReqDT</th>
+	  	<th>By</th>
+	  	<th>Notes</th>
+	  	<th>RequestedByMM</th>
+	  	<th>DTSent2MM</th>
+	  	<th>Filed</th>
+	  	<th>ScanID</th>
+	  	<th>Box No.</th>
+	      </tr>
+	    </tfoot>
+	  </table>
+
+
+
+<!-- CreateSAE Modal -->
+<div class="modal fade" id="CreateSAEModal" tabindex="-1" role="dialog" aria-labelledby="CreateSAEModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="CreateSAEModalLabel">New SAE</h3>
+      </div>
+      <div class="modal-body" style="padding:40px 50px;">
+
+	<form role="form">
+          <div class="form-group row">
+            <div class="col-sm-2"> <label>PatientID</label></div>
+            <div class="col-sm-4"><input type="text" class="form-control" id="PATID" placeholder="" size="15" onchange="validatePID(this.value);"> <span id="validatePIDstatus"></span></div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-2"><label for="EVENT"> Event</label></div>
+            <div class="col-sm-10"><input type="text" class="form-control" id="EVENT" placeholder=""></div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-2"><label for="RECNO"> AE #</label></div>
+            <div class="col-sm-2"><input type="text" class="form-control" id="RECNO" placeholder="" onchange="validateRECNO(this.value);"></div>
+	    <div class="col-sm-3"><span id="validateRECNOstatus"></span></div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-2"><label for="STARTDT"> AE Date</label></div>
+            <div class="col-sm-4"><input type="text" class="form-control" id="STARTDT" name="STARTDT" placeholder="YYYY-MM-DD"></div>
+          </div>
+
+          <div class="form-group row">
+            <div class="radio">
+              <div class='col-sm-2'> <b>EndPoint</b> </div>
+	      <div class='col-sm-2'> <label><input type="radio" name="ENDPOINT" id="ENDPOINTyes" value="1">Yes</label> </div>
+	      <div class='col-sm-2'> <label><input type="radio" name="ENDPOINT" id="ENDPOINTno" value="0">No</label> </div>
+	    </div>
+	  </div>
+
+          <div class="form-group">
+            <div class="radio">
+              <div > <b>Related</b> </div>
+	      <div > <label><input type="radio" name="RELATED" id="unrelated" value="1">Unrelated</label> </div>
+	      <div > <label><input type="radio" name="RELATED" id="possibleRelated" value="2">Possibly Related</label> </div>
+	      <div > <label><input type="radio" name="RELATED" id="probablyRelated" value="3">Probably Related</label> </div>
+	      <div > <label><input type="radio" name="RELATED" id="defRelated" value="4">Definitely Related</label> </div>
+	    </div>
+	  </div>
+
+          <div class="form-group row">
+            <div class="radio">
+              <div class='col-sm-2'> <b>Unexpected</b> </div>
+	      <div class='col-sm-2'> <label><input type="radio" name="UNEXPECTED" id="UNEXPECTEDyes" value="1">Yes</label> </div>
+	      <div class='col-sm-2'> <label><input type="radio" name="UNEXPECTED" id="UNEXPECTEDno" value="0">No</label> </div>
+	    </div>
+	  </div>
+
+          <div class="form-group row">
+            <div class="radio">
+              <div class='col-sm-3'> <b>Randomized</b> </div>
+	      <div class='col-sm-3'> <label><input type="radio" name="Randomized" id="RandYes" value="pre-rand">Pre-Rand</label> </div>
+	      <div class='col-sm-3'> <label><input type="radio" name="Randomized" id="RandNo" value="post-rand">Post-Rand</label> </div>
+	    </div>
+	  </div>
+
+          <div class="form-group row">
+            <div class="col-sm-4"><label for="DTMedRecRequested"> Date 1st Requested</label></div>
+            <div class="col-sm-4"><input type="text" class="form-control datepicker" id="DTMedRecRequested" name="DTMedRecRequested" placeholder="YYYY-MM-DD"></div>
+          </div>
+
+          <div class="form-group">
+            <div class=""><label for="Notes"> Notes</label></div>
+            <div class=""><input type="textarea" class="form-control" id="CNotes" placeholder=""></div>
+          </div>
+
+          <!-- <div class="checkbox"> -->
+          <!--   <label><input type="checkbox" value="" checked>Remember me</label> -->
+          <!-- </div> -->
+          <!-- <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Login</button> -->
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="CreateSAESave">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- UpdateSAE Modal -->
+<div class="modal fade" id="UpdateSAEModal" tabindex="-1" role="dialog" aria-labelledby="UpdateSAEModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" id="UpdateSAEModalLabel">Update SAE for </h3>
+      </div>
+      <div class="modal-body" style="padding:40px 50px;">
+
+	<form role="form">
+
+          <div class="form-group row">
+            <div class="col-sm-4"><label for="DTMedRecRecieved">2nd Request Date</label></div>
+            <div class="col-sm-4"><input type="text" class="form-control datepicker" id="2ndReqDT" placeholder="YYYY-MM-DD"></div>
+            <div class="col-sm-4"><input type="hidden" id="2ndReqBy"></div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-4"><label for="DTMedRecRecieved">3rd Request Date</label></div>
+            <div class="col-sm-4"><input type="text" class="form-control datepicker" id="3rdReqDT" placeholder="YYYY-MM-DD"></div>
+            <div class="col-sm-4"><input type="hidden" id="3rdReqBy"></div>
+          </div>
+
+	  <hr>
+
+          <div class="form-group row">
+            <div class="col-sm-4"><label for="DTMedRecRecieved"> Date Rec Recieved</label></div>
+            <div class="col-sm-4"><input type="text" class="form-control datepicker" id="DTMedRecRecieved" placeholder="YYYY-MM-DD"></div>
+          </div>
+
+          <div class="form-group row">
+	    <label class="col-sm-4" for="ClinicianReview">Clinician Review:</label>
+	    <div class="col-sm-4"> <select class="form-control" id="ClinicianReview">
+	      <option></option>
+	      <option>Dr. Barbhaiya</option>
+	      <option>Dr. Everett</option>
+	      <option>Dr. Pradhan</option>
+	      <option>Dr. Ridker</option>
+	      <option>Dr. Ritter</option>
+	      <option>Dr. Solomon</option>
+	      <option>Dr. Sparks</option>
+	    </select> </div>
+          </div>
+
+          <div class="checkbox row">
+            <label class="col-sm-6"><b>Requested by Medical Monitor</b> </label> 
+	    <input type="checkbox" id="RequestedByMM" value="1">
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-4"><label for="DTSentToMM"> Date Sent to Medical Monitor</label></div>
+            <div class="col-sm-4"><input type="text" class="form-control datepicker" id="DTSentToMM" placeholder="YYYY-MM-DD"></div>
+          </div>
+
+          <div class="checkbox row">
+            <div class="col-sm-2"><b>Filed</b> </div> 
+	    <label><input type="checkbox" id="Filed" value="1">Yes</label>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-2"><label for="ScanID"> Scan ID</label></div>
+            <div class="col-sm-10"><input type="text" class="form-control " id="ScanID" placeholder=""></div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-2"><label for="BoxNo"> Box #</label></div>
+            <div class="col-sm-10"><input type="text" class="form-control " id="BoxNo" placeholder=""></div>
+          </div>
+
+          <div class="form-group">
+            <div class=""><label for="Notes"> Notes</label></div>
+            <textarea class="form-control" id="UNotes" rows="2"> </textarea>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="UpdateSAESave">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(function () {
+
+    var $row;
+    var $username = '<%== getUserName %>' ;
+
+   $("#NewSAE").on('click', function( e ) {
+      $("#CreateSAEModal").modal();
+   });
+
+
+    $('#CreateSAEModal').on('shown.bs.modal', function () {
+	$('#PATID').focus();
+    });
+
+
+    <!-- clear modal page after closing or submitting -->
+    $('.modal').on('hidden.bs.modal', function() {
+       $(this)
+              .find('input[type="text"],textarea,select' ).val('').end()
+              .find('input[type="checkbox"],input[type="radio"]' ).prop("checked", "").end();
+              $( '#validatePIDstatus' ).html("");
+              $( '#validateRECNOstatus' ).html("");
+    });
+
+});
+
+
+function validatePID (val) {
+
+    if ( val ) {
+    $.ajax({
+          type: 'post',
+          url: 'http://tully.dpm.bwh.harvard.edu/api/validatePID',
+          data: {    PATID:val,    },
+          success: function (response) {    $( '#validatePIDstatus' ).html(response);    }
+       });
+    }; 
+
+};
+
+function validateRECNO (val) {
+
+    var pid = $( '#PATID' ).val();
+    if ( val ) {
+       $.ajax({
+          type: 'post',
+          url: 'http://tully.dpm.bwh.harvard.edu/api/validateRECNO',
+          data: {    PATID:pid, RECNO:val   },
+          success: function (response) {    $( '#validateRECNOstatus' ).html(response);    }
+       });
+    }
+
+};
+
+
+</script>
+</body>

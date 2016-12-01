@@ -1,0 +1,234 @@
+package Moblo::Foo;
+use Mojo::Base 'Mojolicious::Controller';
+
+use Data::Dumper;
+use DBI;
+
+sub welcome { ##     $authorized->get('/iEventCover/:patid')->to(controller => 'foo', action => 'welcome');
+    my $self = shift;
+
+    # $self->render( text => 'Hello, There.');
+    ### print "***", $self->stash('patid'), "\n";
+    my $patid = $self->stash('patid');
+    # my $dbh = $con->dbh;
+
+    # my $query = "SELECT  from  where  ";
+    # my $data = $conn->selectall_arrayref( $query );
+    # print Dumper( $data );
+    # print "%%%". $data->[0]->[0];
+    
+    # $username = $data->[0]->[0];
+
+    my $dbh = "";
+    $dbh = DBI->connect('DBI:mysql:database=cirt;host=localhost','cirt','cirt1234') or die $DBI::errstr;
+
+    my $SQL = "select PATID, AGE, GENDER, MI, CAD, if( MIDT < CAGDT, CAGDT, MIDT ) as iDT from baseline where PATID = \"$patid\"";
+    my $cursor = $dbh->prepare($SQL);
+    $cursor->execute;
+    # my $data = $cursor->fetchall_arrayref;
+    my $data = $cursor->fetchrow_hashref;
+    $cursor->finish;
+
+    $SQL = "select reviewer, ReviewedDate, qualifyMI, HospitalRecordMI, Echo, NuclearPerfusion, EKG, Other, STEMI, multivesselCAD, qualifyCAD, LMCAdisease, Stent, StentNumber, CABG, Stenosis, StenosisStentNumber, EF, adequateInfo, DateCalledSite, DateAdditionalInformationReceived, 2ndReview, DateCalledSite2ndReview, DateFinalDecision, FemaleChildBearing from  indexEventCoverSheet where PatientID = \"$patid\"";
+    $cursor = $dbh->prepare($SQL);
+    $cursor->execute;
+    my $data2 = $cursor->fetchrow_hashref;
+    $cursor->finish;
+
+    $SQL = "select LastName, FirstName from PiCoordsContactEDC where SiteID = \"". substr($patid, 0,7)."\" and Role = \"PI\";";
+    $cursor = $dbh->prepare($SQL);
+    $cursor->execute;
+    my $data3 = $cursor->fetchrow_hashref;
+    $cursor->finish;
+
+    $dbh->disconnect;
+
+    # print Dumper( $data );
+    # print Dumper( $data2->{'qualifyMI'} );
+    # print Dumper( $data2 );
+    # print Dumper( $data->{'EDC_MI'} );
+
+    # $self = $self->param( reviewer => 'Brendan' );
+    # $self = $self->param( qualifyMI => '1' );
+    
+    my $sex;
+    if( $data->{'GENDER'} == 1 ) {
+	$sex = "Male";
+    }
+    else {
+	$sex = "Female";
+    }
+
+    
+    ### if param is set, the html page with tag helper will automatically connects the parameters with the variables.
+    foreach my $par ( keys %$data2 ) {
+	$self = $self->param( $par => $data2->{$par} );
+    }
+
+    $self->stash(one=> $data->{'MI'}, two=> $data->{'CAD'}, three => $data->{'iDT'}, four => $data3->{'LastName'}, five => $data3->{'FirstName'}, six => $data->{'AGE'}, seven => $sex );
+
+    $self->render( template => 'cirt/iEventCover' );
+}
+
+sub postIEventCover {
+    my $self = shift;
+    ### print Dumper( $self );
+    
+    my $patid = $self->param('PatientID');
+    ### print Dumper( $patid );
+    my $reviewer = $self->param('reviewer');
+
+    my $params = $self->req->params;
+    my $hash = $params->to_hash;    
+    # print Dumper( $hash );
+
+    my @myKeys;
+    my @myValues;
+    
+    foreach my $par ( keys %$hash ) {
+    	my $tmp = $par . " = \"" . $hash->{$par} . "\"";
+    	# push (@arr, $tmp);
+	push ( @myKeys, $par );
+	push ( @myValues, $hash->{$par} );
+    }
+
+    my $dbh = DBI->connect('DBI:mysql:database=cirt;host=localhost','cirt','cirt1234') or die $DBI::errstr;
+
+    #### check if this patient is already there. If already there, update. if not, insert.
+    my $SQL = "SELECT * from indexEventCoverSheet WHERE PatientID = \"$patid\"";
+
+    my $cursor = $dbh->prepare($SQL);
+    $cursor->execute;
+    my $AlreadyThere = $cursor->rows;
+
+    if ( $AlreadyThere ) { # if already there, update
+
+	$SQL = "UPDATE indexEventCoverSheet SET ";
+	for my $i ( 0.. scalar @myKeys -1 ) {
+	    print "+  $i\t$myKeys[$i]\t$myValues[$i]\n";
+	    $SQL = $SQL . " $myKeys[$i] = \"$myValues[$i]\",";
+	}
+	chop( $SQL );
+	$SQL = $SQL . " WHERE PatientID = \"$patid\"; ";
+	$SQL =~ s/\"\"/NULL/g;
+	$SQL =~ s/\'\'/NULL/g;
+	print $SQL, "\n";
+	
+	$cursor = $dbh->prepare($SQL);
+	$cursor->execute;
+
+    } 
+    else { # if not, insert
+
+    	my $username = $self->session('username');
+	
+    	$SQL = "INSERT  INTO indexEventCoverSheet (" . join( ", ", @myKeys ) . ", stamp_created, EnteredBy) VALUES (\'". join( "\', \'", @myValues ) . "\', \'\', \"". $username ."\");";
+
+    	$SQL =~ s/\'\'/NULL/g;
+	print $SQL, "\n";
+    	$cursor = $dbh->prepare($SQL);
+	$cursor->execute;
+	$cursor->finish;
+
+    	### In inserting, update indexEvents table for EnteredBy
+    	$SQL = "UPDATE indexEvents SET EnteredBy = \"" . $username . "\" WHERE PatientID = \"". $patid ."\";";
+
+    	$cursor = $dbh->prepare($SQL);
+    	$cursor->execute;
+	$cursor->finish;
+
+    }
+    
+    ### in any modifications, update indexEvent with these
+
+    $SQL = "UPDATE indexEvents SET ";#WHERE PatientID = \"". $patid ."\";";
+
+    if ( $self->param('reviewer') ) {
+	$SQL = $SQL . " Reviewer = \"" . $self->param('reviewer') . "\", ";
+    } else {
+	$SQL = $SQL . " Reviewer = NULL, ";
+    }
+    if ( $self->param('ReviewedDate') ) {
+	$SQL = $SQL . " ReviewedDate = \"" . $self->param('ReviewedDate') . "\", ";
+    } else {
+	$SQL = $SQL . " ReviewedDate = NULL, ";
+    }
+    if ( $self->param('qualifyMI') ) {
+	$SQL = $SQL . " MI = 'yes',";
+    } else {
+	$SQL = $SQL . " MI = NULL,";
+    }
+    if ( $self->param('qualifyCAD') ) {
+	$SQL = $SQL . " CAD = 'yes',";
+    } else {
+	$SQL = $SQL . " CAD = NULL,";
+    }
+    if ( $self->param('qualifyMI') || $self->param('qualifyCAD') ) {
+	$SQL = $SQL . " IndexEvent = 'yes',";
+    } else {
+	$SQL = $SQL . "IndexEvent = NULL,";
+    }
+    if ( $self->param('qualifyMI') && $self->param('qualifyCAD') ) {
+	$SQL = $SQL . " MI_CAD = 'yes', ";
+    } else {
+	$SQL = $SQL . " MI_CAD = NULL, ";
+    }
+    if ( $self->param('FemaleChildBearing') eq 'Yes' ) {
+	$SQL = $SQL . " ChildBearing = 'yes' ";
+    } else {
+	$SQL = $SQL . " ChildBearing = NULL ";
+    }
+    
+    $SQL = $SQL . " WHERE PatientID = \"". $patid . "\";";
+    
+    print "***\n";
+    print $SQL;
+
+    $cursor = $dbh->prepare($SQL);
+    $cursor->execute;
+    $cursor->finish;
+
+    $dbh->disconnect;
+
+    # $self->render( text => 'I am here, '. $reviewer . " " .  $patid );
+    $self->redirect_to('indexEvent');
+
+}
+
+sub receivedBeforeEDC { ##
+    my $self = shift;
+
+    my $dbh = DBI->connect('DBI:mysql:database=cirt;host=localhost','cirt','cirt1234') or die $DBI::errstr;
+
+    my $SQL = "select PatientID, DateReceived from IndexEventReceivedBeforeEDC;";
+    my $cursor = $dbh->prepare($SQL);
+    $cursor->execute;
+    my $data = $cursor->fetchall_arrayref;
+    $cursor->finish;
+
+    print Dumper ( $data );
+
+    $self->stash( rows => $data );
+
+    # $self->render( text => 'Hello' );                                                                 
+    $self->render( template => 'cirt/receivedBeforeEDC' );
+}
+
+sub waitingOnICFinsert {
+    my $self = shift;
+    my $patid = $self->param('patid');
+    my $dateReceived = $self->param('dateReceived');
+
+    # $self->render( text => 'Hello' );
+
+    my $dbh = DBI->connect('DBI:mysql:database=cirt;host=localhost','cirt','cirt1234') or die $DBI::errstr;
+    my $cursor = $dbh->prepare( 'INSERT INTO IndexEventReceivedBeforeEDC ( PatientID, DateReceived ) VALUES (?,?)' );
+    $cursor->execute( $patid, $dateReceived );
+
+    $self->redirect_to('waitingOnICF');
+}
+
+
+
+
+1;

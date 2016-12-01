@@ -1,0 +1,189 @@
+<html>
+  <head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc= sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+    
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <!-- <title>Index Event : <%= stash('patid') %></title> -->
+    
+    <style>
+      body {
+      font-family: 'Open Sans', sans-serif;
+      }
+    </style>
+    
+    <script>
+      $(function() {
+      $( ".datepicker" ).datepicker( { dateFormat: "yy-mm-dd" });
+      });
+    </script>
+
+  </head>
+
+  <body>
+
+
+    <div class="container">
+      
+      <center><h3>CIRT Qualifying MI/CAD Data Sheet</h3></center>
+
+      %= form_for 'post_physician' => (method => 'POST') => begin
+
+      <input type="hidden" name="PatientID" value="<%=stash('patid')%>">
+      
+      <div class="row">
+
+	<div class="col-xs-6">
+	  
+	  <b>Subject ID : <%= stash('patid') %> </b> </br> 
+	  PI : <%= stash('four') %>, <%= stash('five') %></br>
+	  Date of Qualifying event (from EDC) : <%= stash('three') %> </br></br>
+	  
+	  <p>Date Reviewed : <%= text_field 'ReviewedDate', class => 'datepicker' %></p>
+	</div>
+	<div class="col-xs-4" style="outline: 5px solid black">
+	</br>
+	Index Event, MI: <%= stash('one') %> </br>
+	</br>
+	Index Event, MVCAD: <%= stash('two') %></br>
+	</br>
+	</div>
+      </div> <!-- end row -->
+
+      <div class="radio">	
+	Reviewer :</br>
+	<!-- % param reviewer => 'Patrick' unless param 'reviewer'; -->
+	<label style="margin: 0px 12px"> <%= radio_button reviewer => 'Dr. Pradhan' %>Aruna</label>
+	<label style="margin: 0px 12px"> <%= radio_button reviewer => 'Dr. Everett'  %>Brendan</label>
+	<label style="margin: 0px 12px"> <%= radio_button reviewer => 'Dr. Ridker'  %>Paul</label>
+	<label style="margin: 0px 12px"><%= radio_button reviewer => 'Dr. Lawler'   %>Patrick</label>
+	<!-- <label style="margin: 0px 12px"><input type="radio" name="reviewer" value="Aruna">Aruna</label> -->
+	<!-- <label style="margin: 0px 12px"><input type="radio" name="reviewer" value="Brendan">Brendan</label> -->
+	<!-- <label style="margin: 0px 12px"><input type="radio" name="reviewer" value="Paul">Paul</label> -->
+	<!-- <label style="margin: 0px 12px"><input type="radio" name="reviewer" value="Paulo">Paulo</label> -->
+	<!-- <label style="margin: 0px 12px"><input type="radio" name="reviewer" value="Patrick">Patrick</label> -->
+      </div>
+
+      <div class="row" style="outline: 1px solid black">
+	<div class="col-xs-6" style="outline: 1px solid black">
+	  <b>Index Event: MI</b>
+	</div>
+	<div class="col-xs-6" style="">
+	  <b>Index Event: Angiogram with multivessel CAD</b>
+	</div>
+      </div>
+      <div class="row" style="outline: 1px solid black">
+	<div class="col-xs-6" style="outline: 1px solid black">
+
+	  <div class="radio">
+	    Does the patient qualify for CIRT on the basis of a MI? </br>
+	    <!-- <label style="margin: 0px 12px"><input type="radio" name="qualifyMI" value="1">Yes</label> -->
+	    <!-- <label style="margin: 0px 12px"><input type="radio" name="qualifyMI" value="0">No</label> -->
+	    <label style="margin: 0px 12px"><%= radio_button qualifyMI => '1' %>Yes</label>
+	    <label style="margin: 0px 12px"><%= radio_button qualifyMI => '0' %>No</label>
+	  </div>
+
+	  <div class="checkbox">
+	    Which of the following were available to document MI (check all that apply)?</br>
+	    <!-- <label><input type="checkbox" value="1" name="HospitalRecordMI">Hospital records with report of MI</label></br> -->
+	    <label><%= check_box HospitalRecordMI => 1 %>Hospital records with report of MI</label></br>
+	    <label><%= check_box Echo => 1 %>Echo with scar or wall motion abnormality</label></br>
+	    <label><%= check_box NuclearPerfusion => 1 %>Nuclear perfusion scan with scar</label></br>
+	    <label><%= check_box EKG => 1 %>EKG with Q waves</label></br>
+	    <label><%= check_box Other => 1 %>Other</label>
+	  </div>
+
+	  <div class="radio">
+	    Was the qualifying MI:</br>
+	    <label style="margin: 3px 12px"><%= radio_button STEMI => 'STEMI' %>STEMI</label>
+	    <label style="margin: 3px 12px"><%= radio_button STEMI => 'NSTEMI' %>NSTEMI</label>
+	    <label style="margin: 3px 12px"><%= radio_button STEMI => 'NA' %>Not available</label>
+	  </div>
+
+	  <div class="radio">
+	    Does the subject have multivessel CAD?</br>
+	    <label style="margin: 3px 15px"><%= radio_button multivesselCAD => 'Yes' %>Yes</label>
+	    <label style="margin: 3px 15px"><%= radio_button multivesselCAD => 'No' %>No</label>
+	    <label style="margin: 3px 15px"><%= radio_button multivesselCAD => 'NA' %>Not available</label>
+	  </div>
+	</div>
+
+	<div class="col-xs-6" style="">
+	  <div class="radio">
+	    Does the patient qualify for CIRT on the basis of multivessel coronary disease?</br>
+	    <label style="margin: 0px 12px"><%= radio_button qualifyCAD => '1' %>Yes</label>
+	    <label style="margin: 0px 12px"><%= radio_button qualifyCAD => '0' %>No</label>
+	  </div>
+
+	  <div class="checkbox">
+	    Does the patient qualify on the basis of (check all that apply):</br>
+	    <label><%= check_box LMCAdisease => 1 %>LMCA disease (>= 50%)</label></br>
+	    <label><%= check_box Stent => 1 %>Stent to in </label>
+	    <div class="radio" style="text-indent: 10px">
+	      <label><%= radio_button StentNumber => '1' %>1 or </label>
+	      <label><%= radio_button StentNumber => '2' %>2 or </label>
+	      <label><%= radio_button StentNumber => '3' %>3</label> major epicardial arteries
+	    </div>
+	    <label><%= check_box CABG => 1 %>CABG</label></br>
+	    <label><%= check_box Stenosis => 1 %>Stenosis of >= 60% in</label></br>
+	    <div class="radio" style="text-indent: 10px">
+	      <label><%= radio_button StenosisStentNumber => '1' %>1 or </label>
+	      <label><%= radio_button StenosisStentNumber => '2' %>2 or </label>
+	      <label><%= radio_button StenosisStentNumber => '3' %>3</label> major epicardial arteries
+	    </div>
+	  </div>
+
+	</div>
+      </div>
+
+      <div class="row">
+      </br>
+
+      Please complete regardless of qualifying criteria met </br>
+
+      <div class="radio">
+	In the qualifying documents, the subjects EF was:</br>
+	<label style="margin: 3px 12px"><%= radio_button EF => 'gt40' %>>= 40%</label>
+	<label style="margin: 3px 12px"><%= radio_button EF => 'lt40' %>< 40%</label>
+	<label style="margin: 3px 12px"><%= radio_button EF => 'NA' %>Not available</label>
+      </div>
+
+      <div class="radio">
+	Was there adequate Information to confirm the Index Event?</br>
+	<label style="margin: 3px 12px"><%= radio_button adequateInfo => 'Yes' %>Yes</label>
+	<label style="margin: 3px 12px"><%= radio_button adequateInfo => 'No' %>No</label>
+	<label style="margin: 3px 12px"><%= radio_button adequateInfo => 'NA' %>Uncertain</label>
+      </div>
+
+      <!-- <p>If No or Uncertain, Date Called Site: <input type="text" class="datepicker" name="DateCalledSite"></p>	 -->
+      <p>If No or Uncertain, Date Called Site: <%= text_field 'DateCalledSite', class => 'datepicker' %></p>	
+      
+      <p>If Uncertain, Date of Additional Information Received: <%= text_field 'DateAdditionalInformationReceived', class => 'datepicker' %></p>
+      
+      <div class="radio">
+	If Uncertain, Second Review?
+	<label style="margin: 3px 12px"><%= radio_button '2ndReview' => 'Yes' %>Yes</label>
+	<label style="margin: 3px 12px"><%= radio_button '2ndReview' => 'No' %>No</label>
+      </div>
+      
+      <p>If No, Date Called Site: <%= text_field 'DateCalledSite2ndReview', class => 'datepicker' %></p>
+
+      <p>Date of Final Decision: <%= text_field 'DateFinalDecision', class => 'datepicker' %></p>	
+      
+      
+      Reviewer Signature: _____________________________________ </br>
+      
+      </div>
+
+      %= submit_button 'Submit', class => 'display'
+	    % end
+
+      </div>
+  </body>
+</html>

@@ -1,0 +1,105 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title> - jsFiddle demo</title>
+  
+  <script type="text/javascript" src="https://code.jquery.com/jquery-compat-git.js"></script>
+  
+      <!-- <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"> -->
+      <!-- <script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script> -->
+      <link rel="stylesheet" type="text/css" href="./bootstrap.min.css">
+      <script type="text/javascript" src="./bootstrap.min.js"></script>
+
+      <!-- <link rel="stylesheet" type="text/css" href="http://vitalets.github.io/x-editable/assets/x-editable/bootstrap3-editable/css/bootstrap-editable.css"> -->
+      <!-- <script type="text/javascript" src="http://vitalets.github.com/x-editable/assets/x-editable/bootstrap3-editable/js/bootstrap-editable.js"></script> -->
+      <link rel="stylesheet" type="text/css" href="./bootstrap-editable.css">
+      <script type="text/javascript" src="./bootstrap-editable.js"></script>
+
+      <!-- <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css"> -->
+      <!-- <script type="text/javascript" src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.min.js"></script> -->
+      <link rel="stylesheet" type="text/css" href="./jquery.dataTables.css">
+      <script type="text/javascript" src="./jquery.dataTables.min.js"></script>
+      <!-- <script type="text/javascript" src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script> -->
+
+      <!-- <script type="text/javascript" src="//cdn.datatables.net/plug-ins/28e7751dbec/integration/bootstrap/3/dataTables.bootstrap.js"></script> -->
+      <!-- <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/28e7751dbec/integration/bootstrap/3/dataTables.bootstrap.css"> -->
+      <script type="text/javascript" src="./dataTables.bootstrap.js"></script>
+      <link rel="stylesheet" type="text/css" href="./dataTables.bootstrap.css">
+
+      <script type="text/javascript" src="./jquery.datatables.yadcf.js"></script>
+      <link rel="stylesheet" type="text/css" href="./jquery.datatables.yadcf.css">
+  <style type="text/css">
+    
+  </style>
+  
+
+
+<script type="text/javascript">//<![CDATA[ 
+$(function(){
+    $(document).ready(function() {
+      $('#example').dataTable({
+          "aaSorting": [[ 1, "desc" ]],
+          "lengthMenu": [[50, 250, 500, 1000], [50, 250, 500, 1000]],
+          "iDisplayLength": 250
+        });
+      });
+
+
+
+$.fn.editable.defaults.mode = 'inline';
+debugger;
+$('#example .second_td a').editable({
+    type: 'select',
+    name: 'Type',
+    title: 'Type',
+    source: [
+      {value: 0, text: '0'},
+      {value: 1, text: '1'},
+      {value: 2, text: '2'},
+      {value: 3, text: '3'},
+      {value: 4, text: '4'},
+      {value: 5, text: '5'},
+      {value: 6, text: '6'}
+    ]
+});
+});//]]>  
+
+</script>
+
+
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3 class="text-muted">Products in the System</h3>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-sm-12">
+
+	<div class="dataTables_wrapper form-inline no-footer" id="example_wrapper">
+
+	  <table aria-describedby="example_info" role="grid" class="dataTable no-footer" id="example">
+	    <thead>
+	      <tr role="row">
+		<th aria-label="ID: activate to sort column ascending" style="width: 561px;" colspan="1" rowspan="1" aria-controls="example" tabindex="0" class="sorting">ID</th>
+		<th aria-label="Type: activate to sort column ascending" aria-sort="descending" style="width: 507px;" colspan="1" rowspan="1" aria-controls="example" tabindex="0" class="sorting_desc">Type</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <tr class="odd" role="row">
+		<td><a href="http://example.com">ABC-123</a></td>
+		<td class="sorting_1"> <div class="second_td"><a class="editable editable-click" href="#" pk-data="ABC-123" data-type="select" data-value="0">0</a></div></td>
+	      </tr><tr class="even" role="row">
+		<td><a href="http://example.com">XYZ-890</a></td>
+		<td class="sorting_1"><div class="second_td"><a class="editable editable-click" href="#" pk-data="XYZ-890" data-type="select" data-value="1">1</a></div></td>
+	    </tr>
+	    </tbody>
+	  </table>
+
+	</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

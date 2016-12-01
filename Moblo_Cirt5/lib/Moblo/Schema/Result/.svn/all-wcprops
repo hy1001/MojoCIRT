@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/bwh-cirtdcc/!svn/ver/21/mojo/Moblo_Cirt5/lib/Moblo/Schema/Result
+END
+Post.pm
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bwh-cirtdcc/!svn/ver/21/mojo/Moblo_Cirt5/lib/Moblo/Schema/Result/Post.pm
+END
+User.pm
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/bwh-cirtdcc/!svn/ver/21/mojo/Moblo_Cirt5/lib/Moblo/Schema/Result/User.pm
+END
+Comment.pm
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/bwh-cirtdcc/!svn/ver/21/mojo/Moblo_Cirt5/lib/Moblo/Schema/Result/Comment.pm
+END

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<!--<link rel="shortcut icon" type="image/ico" href="http://www.datatables.net/favicon.ico">-->
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=2.0">
+
+	<title>Hello, CIRT!</title>
+	<link rel="stylesheet" type="text/css" href="http://lannister.dpm.bwh.harvard.edu/DataTables-1.10.5/media/css/jquery.dataTables.css">
+	<link rel="stylesheet" type="text/css" href="http://lannister.dpm.bwh.harvard.edu/DataTables-1.10.5/examples/resources/syntax/shCore.css">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<style type="text/css" class="init">
+
+	</style>
+	<script type="text/javascript" language="javascript" src="http://lannister.dpm.bwh.harvard.edu/DataTables-1.10.5/media/js/jquery.js"></script>
+	<script type="text/javascript" language="javascript" src="http://lannister.dpm.bwh.harvard.edu/DataTables-1.10.5/media/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" language="javascript" src="http://lannister.dpm.bwh.harvard.edu/DataTables-1.10.5/examples/resources/syntax/shCore.js"></script>
+	<script type="text/javascript" language="javascript" src="http://lannister.dpm.bwh.harvard.edu/DataTables-1.10.5/examples/resources/demo.js"></script>
+	<script type="text/javascript" language="javascript" class="init">
+
+$(document).ready(function() {
+	$('#example').dataTable( {
+                "iDisplayLength": 25,
+		"ajax": {
+			"url": "http://tully.dpm.bwh.harvard.edu/api/siteMetrics/",
+			"dataSrc": ""
+		},
+		"columns": [
+			{ "data": "SiteID" },
+			{ "data": "PI" },
+			{ "data": "Liaison" },
+			{ "data": "SiteInitializationDate" },
+			{ "data": "NInformedConsent" },
+			{ "data": "NScreened" },
+			{ "data": "MostRecentScreeningDate" },
+			{ "data": "NStartedRunin" },
+			{ "data": "NRandomized" },
+			<!-- { "data": "BucketProgrammed" }, -->
+			<!-- { "data": "BucketByRA" } -->
+		]
+	} );
+} );
+
+	</script>
+
+
+</head>
+
+<body class="dt-example">
+
+%= form_for 'do_logout' => begin
+    %= submit_button 'Log me out', class => 'btn'
+% end
+
+<a href="admin/delete/US-U122"> goto </a>
+
+	<div class="container">
+	  <div class="jumbotron">
+	    <!-- <h1 class="text-center">Hello, CIRT! $username </h1> -->
+	    <h1 class="text-center">Hello, CIRT! </h1>
+	  </div>
+	  
+	  <table id="example" class="display" cellspacing="0" width="100%">
+	    <thead>
+	      <tr>
+		<th>SiteID</th>
+		<th>PI</th>
+		<th>Liaison</th>
+		<th>SiteInitDate</th>
+		<th>InformedConsent</th>
+		<th>NScreened</th>
+		<th>LatestScreenDate</th>
+		<th>StartedRunin</th>
+		<th>Randomized</th>
+		<!-- <th>BucketProgrammed</th> -->
+		<!-- <th>BucketByRA</th> -->
+	      </tr>
+	    </thead>
+	    
+	    <tfoot>
+	      <tr>
+		<th>SiteID</th>
+		<th>PI</th>
+		<th>Liaison</th>
+		<th>SiteInitDate</th>
+		<th>InformedConsent</th>
+		<th>NScreened</th>
+		<th>LatestScreenDate</th>
+		<th>StartedRunin</th>
+		<th>Randomized</th>
+		<!-- <th>BucketProgrammed</th> -->
+		<!-- <th>BucketByRA</th> -->
+	      </tr>
+	    </tfoot>
+	  </table>
+	</div>
+</body>
+</html>
